@@ -220,8 +220,6 @@ def update_historical_plot(ticker_value):
 
     # PLOT HISTORICAL CASH FLOWS
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',text='FreeCashFlow',title=f'{ticker_value} Historical Free Cash Flows')
-    cf_fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-    cf_fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
     return cf_fig
 
 @app.callback(dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),

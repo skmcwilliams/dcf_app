@@ -304,8 +304,6 @@ class DCF:
         df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cash_flow_list, 'Discounted Free Cash Flow': cash_flow_discounted_list})
         
         fig = px.bar(df,x='Year Out',y=['Free Cash Flow','Discounted Free Cash Flow'],barmode='group')
-        fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
         fig.update_layout(title=f'{ticker} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
         y1 = [millify(i,precision=2) for i in df['Free Cash Flow']]
         y2 = [millify(i,precision=2) for i in df['Discounted Free Cash Flow']]
