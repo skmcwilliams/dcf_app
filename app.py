@@ -46,6 +46,7 @@ server = app.server
 app.layout = html.Div(children=[
     html.Div([
         html.H4(children='Discounted Cash Flows Model'),
+        html.H6(children= 'Code can be found here: https://github.com/skmcwilliams/dcf_app'),
         
         dcc.Dropdown(
             id='ticker',
@@ -221,9 +222,8 @@ def update_historical_plot(ticker_value):
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',title=f'{ticker_value} Historical Free Cash Flows')
     return cf_fig
 
-"""LEFT OFF GETTING BALANCE SHEET AND CASH FLOWS TO BE USED IN VALUATION, NEED TO UPDATE FIG IN UTILS TO SHOW NUMBERS IN BAR CHART"""
 @app.callback(dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
-              #dash.dependencies.Output(component_id='text', component_property= 'children'),
+              dash.dependencies.Output(component_id='text', component_property= 'children'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_pcf_chart(ticker_value):
     if ticker_value=='AAPL':
