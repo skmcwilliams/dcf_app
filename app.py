@@ -137,8 +137,8 @@ def update_ohlc_plot(ticker_value):
    
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category')
-    ohlc_fig.update_layout(title_text=f'{ticker_value} Price Chart')
     ohlc_fig.update_layout(
+        title_text=f'{ticker_value} Price Chart',
         xaxis=dict(
             rangeselector=dict(
                 buttons=list([
@@ -279,7 +279,7 @@ def update_pcf_chart(ticker_value):
                                                 cash_flow_df, total_debt, 
                                                 cash_and_ST_investments, 
                                                 finviz_df, wacc,shares_outstanding)
-    return intrinsic_value[0],f"Valuation for {ticker_value}: {intrinsic_value[1]}"
+    return intrinsic_value[0],f"Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}"
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
 @app.callback(dash.dependencies.Output(component_id='yahoo_plot', component_property= 'figure'),
@@ -293,7 +293,8 @@ def update_yahoo(ticker_value):
     yahoo_ratings.at[2,'Period'] = '2 Months Back'
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
-                            title=f'{ticker_value} Yahoo Recommendation Trends',legend_title='')
+                            title=f'{ticker_value} Yahoo Recommendation Trends')
+    ratings_fig.update_layout(legend_title='')
     return ratings_fig
 
 """CALLBACK FOR FINVIZ RATINGS PLOT"""
