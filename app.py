@@ -6,7 +6,7 @@ Created on Sat Mar  6 08:15:10 2021
 @author: skm
 """
 
-from utils import DCF, FinViz, get_10_year, get_historical_data,make_ohlc
+from utils import DCF, FinViz, get_10_year, get_historical_data,make_ohlc,get_spy,get_dia,get_qqq
 from get_all_tickers import get_tickers as gt
 from yahooquery import Ticker
 import pandas as pd
@@ -26,7 +26,17 @@ finviz=FinViz()
 dcf = DCF()
 fv = FinViz() 
 # tickers of all exchanges
-tickers = gt.get_tickers()
+spy= get_spy()
+dia = get_dia()
+qqq = get_qqq()
+spy = spy['Symbol']
+dia = dia['Symbol']
+qqq = qqq['Ticker']
+tickers=[]
+tickers = [i for i in spy]
+tickers.append([i for i in qqq if i not in tickers])
+tickers.append([i for i in dia if i not in tickers])
+
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
