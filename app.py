@@ -18,6 +18,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from millify import millify
+
 
 
 
@@ -219,7 +221,11 @@ def update_historical_plot(ticker_value):
     cash_flow_df.insert(0,'Period',cash_flow_df['year']+'-'+cash_flow_df['periodType'])
 
     # PLOT HISTORICAL CASH FLOWS
-    cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',text='FreeCashFlow',title=f'{ticker_value} Historical Free Cash Flows')
+    cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',title=f'{ticker_value} Historical Free Cash Flows')
+    texts = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
+    for i, t in enumerate(texts):
+            fig.data[i].text = t
+            fig.data[i].textposition = 'outside'
     return cf_fig
 
 @app.callback(dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
