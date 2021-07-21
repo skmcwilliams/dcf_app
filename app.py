@@ -279,12 +279,12 @@ def update_pcf_chart(ticker_value):
                                                 cash_flow_df, total_debt, 
                                                 cash_and_ST_investments, 
                                                 finviz_df, wacc,shares_outstanding)
-    return intrinsic_value[0],f"Based on the Following Assumptions:n\
-        Total Debt: {total_debt}n\
-        Tax Rate: {tax_rate}n\
-        Cash and Short-Term Investments: {cash_and_ST_investments}n\
-        Beta: {beta}n\
-        Market Rate of Return: 8.50%n\
+    return intrinsic_value[0],f"Based on the Following Assumptions:\n\
+        Total Debt: {total_debt}\n\
+        Tax Rate: {tax_rate}\n\
+        Cash and Short-Term Investments: {cash_and_ST_investments}\n\
+        Beta: {beta}\n\
+        Market Rate of Return: 8.50%\n\
         Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}"
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
