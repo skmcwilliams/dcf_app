@@ -100,7 +100,7 @@ app.layout = html.Div(children=[
     ]),
     html.Div([
         dcc.Graph(id='proj_cashflows'),
-        dcc.Textarea(id='text'),
+        html.H6(id='text'),
     ]),
     html.Div([
         dcc.Graph(id='yahoo_plot'),
@@ -293,7 +293,7 @@ def update_yahoo(ticker_value):
     yahoo_ratings.at[2,'Period'] = '2 Months Back'
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
-                            title=f'{ticker_value} Yahoo Recommendation Trends')
+                            title=f'{ticker_value} Yahoo Recommendation Trends',legend_title='')
     return ratings_fig
 
 """CALLBACK FOR FINVIZ RATINGS PLOT"""
