@@ -20,3 +20,4 @@ pandas==1.*
 numpy==1.*
 yahoofinancials==1.6.*
 yahooquery==2.2.5
+get-all-tickers==1.8

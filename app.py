@@ -6,7 +6,8 @@ Created on Sat Mar  6 08:15:10 2021
 @author: skm
 """
 
-from utils import DCF, FinViz, get_10_year, get_historical_data,make_ohlc,make_comp_chart,get_spy
+from utils import DCF, FinViz, get_10_year, get_historical_data,make_ohlc
+from get_all_tickers import get_tickers as gt
 from yahooquery import Ticker
 import pandas as pd
 from functools import reduce
@@ -24,7 +25,10 @@ import plotly.graph_objects as go
 finviz=FinViz()
 dcf = DCF()
 fv = FinViz() 
-spy = get_spy()
+# tickers of all exchanges
+tickers = gt.get_tickers()
+
+
 """
 # List of data we want to extract from Finviz Table
 if ticker=='AAPL':
@@ -45,7 +49,7 @@ app.layout = html.Div(children=[
         dcc.Dropdown(
             id='ticker',
             options = [
-                {'label': i,'value': i} for i in spy
+                {'label': i,'value': i} for i in tickers
             ],
             # value='IBM',
             searchable=True,
