@@ -291,6 +291,7 @@ def update_pcf_chart(ticker_value):
         Cash and Short-Term Investments: ${cash_and_ST_investments} | \
         Beta: {beta} | \
         Market Rate of Return: 8.50% | \
+        Risk Free Rate (10-year Treasury): {round(treasury*100,2)} | \
         Resulting Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}"
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
