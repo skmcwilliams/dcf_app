@@ -224,8 +224,8 @@ def update_historical_plot(ticker_value):
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',title=f'{ticker_value} Historical Free Cash Flows')
     texts = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
     for i, t in enumerate(texts):
-            fig.data[i].text = t
-            fig.data[i].textposition = 'outside'
+            cf_fig.data[i].text = t
+            cf_fig.data[i].textposition = 'outside'
     return cf_fig
 
 @app.callback(dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
