@@ -62,40 +62,40 @@ app.layout = html.Div(children=[
         dcc.Graph(id = 'ohlc_plot'),
         ]),
 
-    html.Div([
-        dcc.Dropdown(
-            id='comps',
-            options = [
-                {'label': i,'value': i} for i in tickers
-            ],
-            # value='IBM',
-            searchable=True,
-            clearable=True,
-            multi=True,
-            placeholder='Select or type tickers for comparison'
-            ),
-        dcc.Dropdown(
-            id='period',
-            options = [
-                {'label': i,'value': i} for i in ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
-            ],
+    #html.Div([
+     #   dcc.Dropdown(
+      #      id='comps',
+       #     options = [
+        #        {'label': i,'value': i} for i in tickers
+         #   ],
+          #  # value='IBM',
+           # searchable=True,
+            #clearable=True,
+            #multi=True,
+           # placeholder='Select or type tickers for comparison'
+           # ),
+       # dcc.Dropdown(
+        #    id='period',
+         #   options = [
+          #      {'label': i,'value': i} for i in ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
+          #  ],
             # value='5y',
-            searchable=True,
-            clearable=True,
-            placeholder='Select Period'
-            ),
-        dcc.Dropdown(
-            id='interval',
-            options = [
-                {'label': i,'value': i} for i in ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
-            ],
+           # searchable=True,
+            #clearable=True,
+            #placeholder='Select Period'
+            #),
+        #dcc.Dropdown(
+         #   id='interval',
+         #   options = [
+         #       {'label': i,'value': i} for i in ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
+          #  ],
             # value='1d',
-            searchable=True,
-            clearable=True,
-            placeholder='Select Interval'
-            ),
-        dcc.Graph(id = 'comp_plot'),
-    ]),
+           # searchable=True,
+            #clearable=True,
+            #placeholder='Select Interval'
+            #),
+        #dcc.Graph(id = 'comp_plot'),
+   # ]),
     html.Div([
         dcc.Graph(id = 'hist_cashflows'),
     ]),
