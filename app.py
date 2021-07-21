@@ -100,7 +100,7 @@ app.layout = html.Div(children=[
     ]),
     html.Div([
         dcc.Graph(id='proj_cashflows'),
-        html.H6(id='text'),
+        #html.H6(id='text'),
     ]),
     html.Div([
         dcc.Graph(id='yahoo_plot'),
@@ -117,7 +117,7 @@ app.layout = html.Div(children=[
 def update_ohlc_plot(ticker_value):
 
     # gather historical data for ticker and indices data
-    df = get_historical_data(ticker_value,'5Y','1d',True)
+    df = get_historical_data(str(ticker_value),'5Y','1d',True)
 
     ohlc_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
  
@@ -223,7 +223,7 @@ def update_historical_plot(ticker_value):
 
 """LEFT OFF GETTING BALANCE SHEET AND CASH FLOWS TO BE USED IN VALUATION, NEED TO UPDATE FIG IN UTILS TO SHOW NUMBERS IN BAR CHART"""
 @app.callback(dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
-              dash.dependencies.Output(component_id='text', component_property= 'children'),
+              #dash.dependencies.Output(component_id='text', component_property= 'children'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_pcf_chart(ticker_value):
     if ticker_value=='AAPL':
@@ -279,13 +279,13 @@ def update_pcf_chart(ticker_value):
                                                 cash_flow_df, total_debt, 
                                                 cash_and_ST_investments, 
                                                 finviz_df, wacc,shares_outstanding)
-    return intrinsic_value[0],f"Based on the Following Assumptions:\n\
-        Total Debt: {total_debt}\n\
-        Tax Rate: {tax_rate}\n\
-        Cash and Short-Term Investments: {cash_and_ST_investments}\n\
-        Beta: {beta}\n\
-        Market Rate of Return: 8.50%\n\
-        Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}"
+    return intrinsic_value[0],f"Based on the Following Assumptions:\
+        Total Debt: ${round(total_debt,2)} | \
+        Tax Rate: {round(tax_rate*100,2)}% | \
+        Cash and Short-Term Investments: ${round(cash_and_ST_investments,2)} | \
+        Beta: {beta} | \
+        Market Rate of Return: 8.50% | \
+        Resulting Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}"
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
 @app.callback(dash.dependencies.Output(component_id='yahoo_plot', component_property= 'figure'),
