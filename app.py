@@ -21,11 +21,11 @@ from plotly.subplots import make_subplots
 
 
 
-    
-finviz=FinViz()
+# instantiate dcf and finviz classes
 dcf = DCF()
 fv = FinViz() 
-# tickers of all exchanges
+
+# obtain tickers in all major index ETFs
 spy= get_spy()
 dia = get_dia()
 qqq = get_qqq()
@@ -100,7 +100,7 @@ app.layout = html.Div(children=[
     ]),
     html.Div([
         dcc.Graph(id='proj_cashflows'),
-        #html.H6(id='text'),
+        html.H6(id='text'),
     ]),
     html.Div([
         dcc.Graph(id='yahoo_plot'),

@@ -57,10 +57,10 @@ def get_qqq():
     df = df.sort_values('Market Cap $bn',ascending=False)
     return df
 
-def get_historical_data(ticker,period,interval,adj_ohlc):
+def get_historical_data(ticker,period,interval,adjust):
     yf = Ticker(ticker)
     # pull historical stock data for SPY comparison
-    hist = yf.history(period=period,interval=interval,adj_ohlc=adj_ohlc).reset_index()
+    hist = yf.history(period=period,interval=interval,adj_ohlc=adjust).reset_index()
     for i in hist.columns:
         if 'date' not in i:
             hist.rename(columns={i:f'{ticker}_{i}'},inplace=True)
@@ -257,12 +257,12 @@ class DCF:
         else:
             terminal_growth = min(0.05,0.5*lt_growth)
     
-        
+        """
         print(f"FinViz Years 1-5 Growth Rate (5yr EPS): {EPS_growth_5Y*100}%")
         print(f"Projected Years 6-10 Growth Rate: {round(lt_growth*100,2)}%")
         print(f"Projected Years 11-20 Growth Rate: {round(terminal_growth*100,2)}%")
         print(f"Discount Rate: {round(discount_rate*100,2)}%\n")
-        
+        """
         cash_flow=cash_flow_df.iloc[-1]['FreeCashFlow']
         
         # Lists of projected cash flows from year 1 to year 20
