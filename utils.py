@@ -236,9 +236,9 @@ class DCF:
             value = total_debt+equity
             wacc = (equity/value*re) + ((total_debt/value * rd) * (1 - tax_rate))
         
-        print(f"\n{ticker.upper()} Discounted Cash Flows based on the following:")
-        print(f"Market Return Rate: {round(rm*100,2)}%")
-        print(f"Risk Free Rate: {round(rfr*100,2)}%")
+        # print(f"\n{ticker.upper()} Discounted Cash Flows based on the following:")
+        # print(f"Market Return Rate: {round(rm*100,2)}%")
+        # print(f"Risk Free Rate: {round(rfr*100,2)}%")
         return wacc
         
         
@@ -278,7 +278,7 @@ class DCF:
             cash_flow_list.append(cash_flow)
             cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
             cash_flow_discounted_list.append(cash_flow_discounted)
-            print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
+            # print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
         
         # Years 6 to 20
         for year in range(6, 11):
@@ -287,7 +287,7 @@ class DCF:
             cash_flow_list.append(cash_flow)
             cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
             cash_flow_discounted_list.append(cash_flow_discounted)
-            print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
+           # print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
             
         for year in range(11, 21):
             year_list.append(year)
@@ -295,10 +295,10 @@ class DCF:
             cash_flow_list.append(cash_flow)
             cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
             cash_flow_discounted_list.append(cash_flow_discounted)
-            print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
+            # print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
             
-            if year == 20:
-                print("\n")
+            #if year == 20:
+            #    print("\n")
                 
         intrinsic_value = (sum(cash_flow_discounted_list) - total_debt + cash_and_ST_investments)/shares_outstanding
         df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cash_flow_list, 'Discounted Free Cash Flow': cash_flow_discounted_list})
