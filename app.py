@@ -29,15 +29,6 @@ fv = FinViz()
 tickers = gt.get_tickers()
 
 
-"""
-# List of data we want to extract from Finviz Table
-if ticker=='AAPL':
-    key='demo'
-else:
-    keys= ['3da65237f17cee96481b2251702509d1','3a1649ceeafc5888ec99181c59cb5f8b']
-    key= np.random.choice(keys)
-"""
-
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
@@ -64,7 +55,7 @@ app.layout = html.Div(children=[
         dcc.Dropdown(
             id='comps',
             options = [
-                {'label': i,'value': i} for i in spy
+                {'label': i,'value': i} for i in tickers
             ],
             # value='IBM',
             searchable=True,
@@ -178,6 +169,11 @@ def update_historical_plot(ticker_value):
               dash.dependencies.Output(component_id='text', component_property= 'children'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_pcf_chart(ticker_value):
+    if ticker_value=='AAPL':
+        key='demo'
+    else:
+        keys= ['3da65237f17cee96481b2251702509d1','3a1649ceeafc5888ec99181c59cb5f8b']
+        key= np.random.choice(keys)
     yf = Ticker(ticker_value)
     finviz_df = fv.fundamentals(ticker_value)
     #GET QUARTERLY CASH FLOW AND BALANCE SHEET
