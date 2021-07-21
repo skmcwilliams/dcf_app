@@ -7,7 +7,6 @@ Created on Sat Mar  6 08:15:10 2021
 """
 
 from utils import DCF, FinViz, get_10_year, get_historical_data,make_ohlc,get_spy,get_dia,get_qqq
-from get_all_tickers import get_tickers as gt
 from yahooquery import Ticker
 import pandas as pd
 from functools import reduce
@@ -70,6 +69,7 @@ app.layout = html.Div(children=[
             # value='IBM',
             searchable=True,
             clearable=True,
+            multi=True,
             placeholder='Select or type tickers for comparison'
             ),
         dcc.Dropdown(
@@ -116,9 +116,56 @@ app.layout = html.Div(children=[
 def update_ohlc_plot(ticker_value):
 
     # gather historical data for ticker and indices data
-    ticker_hist = get_historical_data(ticker_value,'5Y','1d',True)
+    df = get_historical_data(ticker_value,'5Y','1d',True)
 
-    ohlc_fig = make_ohlc(ticker_value,ticker_hist)
+    ohlc_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
+ 
+    #include OHLC (already comes with rangeselector)
+    ohlc_fig.add_trace(go.Candlestick(x=df['date'],
+                     open=df[f'{ticker_value}_open'], 
+                     high=df[f'{ticker_value}_high'],
+                     low=df[f'{ticker_value}_low'], 
+                     close=df[f'{ticker_value}_close'],name='Daily Candlestick'),secondary_y=True)
+    
+    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_200_sma'],name='200-day SMA',line=dict(color='cyan')),secondary_y=True)
+    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_50_sma'],name='50-day SMA',line=dict(color='navy')),secondary_y=True)
+    
+    # include a go.Bar trace for volume
+    ohlc_fig.add_trace(go.Bar(x=df['date'], y=df[f'{ticker_value}_volume'],name='Volume'),
+                    secondary_y=False)
+   
+    ohlc_fig.layout.yaxis2.showgrid=False
+    ohlc_fig.update_xaxes(type='category')
+    ohlc_fig.update_layout(title_text=f'{ticker_value} Price Chart')
+    ohlc_fig.update_layout(
+        xaxis=dict(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1,
+                         label="1m",
+                         step="month",
+                         stepmode="backward"),
+                    dict(count=6,
+                         label="6m",
+                         step="month",
+                         stepmode="backward"),
+                    dict(count=1,
+                         label="YTD",
+                         step="year",
+                         stepmode="todate"),
+                    dict(count=1,
+                         label="1y",
+                         step="year",
+                         stepmode="backward"),
+                    dict(step="all")
+                ])
+            ),
+            rangeslider=dict(
+                visible=True
+            ),
+            type="date"
+        )
+    )
     return ohlc_fig
 
 """ CALLBACK FOR COMPARISON CHART"""
@@ -163,7 +210,6 @@ def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
 def update_historical_plot(ticker_value):
     yf = Ticker(ticker_value)
     #GET QUARTERLY CASH FLOW
-    balance_sheet= yf.balance_sheet('q',False)
     cash_flow_df = yf.cash_flow('a',True).reset_index()
     cash_flow_df = cash_flow_df.drop_duplicates(subset='asOfDate')
     cash_flow_df['asOfDate'] = list(map(str,cash_flow_df['asOfDate']))
