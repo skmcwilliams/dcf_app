@@ -17,6 +17,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 
 
@@ -169,7 +170,7 @@ def update_ohlc_plot(ticker_value):
     return ohlc_fig
 
 """ CALLBACK FOR COMPARISON CHART"""
-@app.callback(dash.dependencies.Output(component_id='ohlc_plot', component_property= 'figure'),
+@app.callback(dash.dependencies.Output(component_id='comp_plot', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value'),
               dash.dependencies.Input(component_id='comps', component_property= 'value'),
               dash.dependencies.Input(component_id='period', component_property= 'value'),
