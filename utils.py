@@ -302,7 +302,7 @@ class DCF:
         intrinsic_value = (sum(cash_flow_discounted_list) - total_debt + cash_and_ST_investments)/shares_outstanding
         df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cash_flow_list, 'Discounted Free Cash Flow': cash_flow_discounted_list})
         
-        fig = px.bar(df,x='Year Out',y=['Free Cash Flow','Discounted Free Cash Flow'],barmode='group')
+        fig = px.bar(df,x='Year Out',y=['Free Cash Flow','Discounted Free Cash Flow'],barmode='group',text=['Free Cash Flow','Discounted Free Cash Flow'])
         fig.update_layout(title=f'{ticker} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
        
     
