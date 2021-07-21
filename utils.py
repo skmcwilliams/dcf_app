@@ -302,10 +302,14 @@ class DCF:
         intrinsic_value = (sum(cash_flow_discounted_list) - total_debt + cash_and_ST_investments)/shares_outstanding
         df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cash_flow_list, 'Discounted Free Cash Flow': cash_flow_discounted_list})
         
-        fig = px.bar(df,x='Year Out',y=['Free Cash Flow','Discounted Free Cash Flow'],barmode='group',text='Free Cash Flow')
+        fig = px.bar(df,x='Year Out',y=['Free Cash Flow','Discounted Free Cash Flow'],barmode='group')
         fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
         fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
         fig.update_layout(title=f'{ticker} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
+        texts = ['Free Cash Flow','Discounted Free Cash Flow']
+        for i, t in enumerate(texts):
+            fig.data[i].text = t
+            fig.data[i].textposition = 'outside'
     
         return fig, intrinsic_value
     
