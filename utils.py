@@ -17,6 +17,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from yahooquery import Ticker
+from millify import millify
 
 def get_dia():
     """dataframe of info of all tickers in Dow Jones Industrial Average"""
@@ -306,7 +307,7 @@ class DCF:
         fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
         fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
         fig.update_layout(title=f'{ticker} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
-        texts = ['Free Cash Flow','Discounted Free Cash Flow']
+        texts = [[millify(i,precision=2) for i in df['Free Cash Flow']],millify(i,precision=2) for i in df['Discounted Free Cash Flow']]
         for i, t in enumerate(texts):
             fig.data[i].text = t
             fig.data[i].textposition = 'outside'
