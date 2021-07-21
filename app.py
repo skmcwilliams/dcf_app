@@ -280,9 +280,9 @@ def update_pcf_chart(ticker_value):
                                                 cash_and_ST_investments, 
                                                 finviz_df, wacc,shares_outstanding)
     return intrinsic_value[0],f"Based on the Following Assumptions:\
-        Total Debt: ${round(total_debt,2)} | \
-        Tax Rate: {round(tax_rate*100,2)}% | \
-        Cash and Short-Term Investments: ${round(cash_and_ST_investments,2)} | \
+        Total Debt: ${round(total_debt,0)} | \
+        Tax Rate: {round(tax_rate*100,0)}% | \
+        Cash and Short-Term Investments: ${round(cash_and_ST_investments,0)} | \
         Beta: {beta} | \
         Market Rate of Return: 8.50% | \
         Resulting Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}"
