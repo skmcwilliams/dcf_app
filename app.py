@@ -25,15 +25,14 @@ finviz=FinViz()
 dcf = DCF()
 fv = FinViz() 
 spy = get_spy()
+"""
 # List of data we want to extract from Finviz Table
-
-
 if ticker=='AAPL':
     key='demo'
 else:
     keys= ['3da65237f17cee96481b2251702509d1','3a1649ceeafc5888ec99181c59cb5f8b']
     key= np.random.choice(keys)
-
+"""
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
