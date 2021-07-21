@@ -59,7 +59,7 @@ app.layout = html.Div(children=[
             placeholder='Select or type ticker for valuation'
             ),
         
-        dcc.Graph(id = 'ohlc_plot'),
+       # dcc.Graph(id = 'ohlc_plot'),
         ]),
 
     #html.Div([
