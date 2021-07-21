@@ -307,7 +307,9 @@ class DCF:
         fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
         fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
         fig.update_layout(title=f'{ticker} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
-        texts = [[millify(i,precision=2) for i in df['Free Cash Flow']],millify(i,precision=2) for i in df['Discounted Free Cash Flow']]
+        y1 = [millify(i,precision=2) for i in df['Free Cash Flow']]
+        y2 = [millify(i,precision=2) for i in df['Discounted Free Cash Flow']]
+        texts = [y1,y2]
         for i, t in enumerate(texts):
             fig.data[i].text = t
             fig.data[i].textposition = 'outside'
