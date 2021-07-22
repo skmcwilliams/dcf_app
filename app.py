@@ -295,7 +295,7 @@ def update_pcf_chart(ticker_value):
         Total Debt: ${millify(total_debt,2)} | \
         Tax Rate: {round(tax_rate*100,0)}% | \
         Cash and Short-Term Investments: ${millify(cash_and_ST_investments,2)} | \
-        Beta: {beta} | \
+        Beta: {round(beta,2)} | \
         Market Rate of Return: 8.50% | \
         Risk Free Rate (10-year Treasury): {round(treasury*100,2)}% | \
         Resulting Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}/share | \
