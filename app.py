@@ -6,13 +6,12 @@ Created on Sat Mar  6 08:15:10 2021
 @author: skm
 """
 
-from utils import DCF, FinViz, get_10_year, get_historical_data,make_ohlc,get_spy,get_dia,get_qqq
+from utils import DCF, FinViz, get_10_year, get_historical_data,make_ohlc,Indices
 from yahooquery import Ticker
 import pandas as pd
 from functools import reduce
 import numpy as np
 import plotly.express as px
-import plotly.io as pio
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -28,18 +27,9 @@ dcf = DCF()
 fv = FinViz() 
 
 # obtain tickers in all major index ETFs
-spy= get_spy()
-dia = get_dia()
-qqq = get_qqq()
-spy = spy['Symbol']
-dia = dia['Symbol']
-qqq = qqq['Ticker']
-tickers=[]
-tickers = [i for i in spy]
-tickers.append([i for i in qqq if i not in tickers])
-tickers.append([i for i in dia if i not in tickers])
-
-
+index = Indices()
+vti = index.get_vti()
+tickers = vti['Ticker']
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -141,7 +131,7 @@ def update_ohlc_plot(ticker_value):
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category')
     ohlc_fig.update_layout(
-        title_text=f'{ticker_value} Price Chart',
+        title_text=f"{vti['HOLDINGS'][vti['TICKER']==ticker_value][0]} Price Chart",
         xaxis=dict(
             rangeselector=dict(
                 buttons=list([
@@ -203,7 +193,7 @@ def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
             autorange=True, # PLOTLY HAS NO AUTORANGE FEATURE, TRYING TO IMPLEMENT MANUALLY BUT NO DICE
             fixedrange=False, # PLOTLY HAS NO AUTORANGE FEATURE, TRYING TO IMPLEMENT MANUALLY BUT NO DICE
             ),
-        title_text=f'{ticker_value} vs. {comps_value} Historical Prices',
+        title_text=f"{ticker_value} vs. {comps_value} Historical Prices",
     )
 
     return comp_fig
@@ -313,18 +303,18 @@ def update_yahoo(ticker_value):
     yahoo_ratings.at[2,'Period'] = '2 Months Back'
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
-                            title=f'{ticker_value} Yahoo Recommendation Trends')
+                            title=f"{ticker_value}Yahoo Recommendation Trends")
     ratings_fig.update_layout(legend_title='')
     return ratings_fig
 
 """CALLBACK FOR FINVIZ RATINGS PLOT"""
 @app.callback(dash.dependencies.Output(component_id='finviz_plot', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
-def update_yahoo(ticker_value):
+def update_finviz(ticker_value):
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
-    fv_fig = px.histogram(finviz_ratings, x="rating",title=f'{ticker_value} 2021 Ratings per FinViz')
+    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{ticker_value} 2021 Investment Bank Ratings per FinViz")
     return fv_fig
 
 
