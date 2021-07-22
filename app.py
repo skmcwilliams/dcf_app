@@ -6,7 +6,7 @@ Created on Sat Mar  6 08:15:10 2021
 @author: skm
 """
 
-from utils import DCF, FinViz, get_10_year, get_historical_data,make_ohlc,Indices
+from utils import DCF, FinViz, Indices,get_10_year, get_historical_data,make_ohlc
 from yahooquery import Ticker
 import pandas as pd
 from functools import reduce
@@ -276,7 +276,7 @@ def update_pcf_chart(ticker_value):
     treasury = get_10_year()
     wacc = dcf.get_wacc(total_debt,total_equity,debt_payment,tax_rate,beta,treasury,ticker_value)
 
-    # CALL STRATEGISK DCF VALUATION
+    # DCF VALUATION
     intrinsic_value = dcf.calculate_intrinsic_value(ticker_value,
                                                 cash_flow_df, total_debt, 
                                                 cash_and_ST_investments, 
