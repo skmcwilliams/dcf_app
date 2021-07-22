@@ -291,14 +291,14 @@ def update_pcf_chart(ticker_value):
                                                 cash_flow_df, total_debt, 
                                                 cash_and_ST_investments, 
                                                 finviz_df, wacc,shares_outstanding)
-    return intrinsic_value[0],f"Based on the Following Assumptions:\
-        Total Debt: ${total_debt} | \
+    return intrinsic_value[0],f"Based on the Following:\
+        Total Debt: ${millify(total_debt)} | \
         Tax Rate: {round(tax_rate*100,0)}% | \
-        Cash and Short-Term Investments: ${cash_and_ST_investments} | \
+        Cash and Short-Term Investments: ${millify(cash_and_ST_investments)} | \
         Beta: {beta} | \
         Market Rate of Return: 8.50% | \
         Risk Free Rate (10-year Treasury): {round(treasury*100,2)}% | \
-        Resulting Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}"
+        Resulting Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}/share"
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
 @app.callback(dash.dependencies.Output(component_id='yahoo_plot', component_property= 'figure'),
