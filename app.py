@@ -299,7 +299,7 @@ def update_pcf_chart(ticker_value):
         Market Rate of Return: 8.50% | \
         Risk Free Rate (10-year Treasury): {round(treasury*100,2)}% | \
         Resulting Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}/share | \
-        Margin to Current Price: {round((1-current_price/intrinsic_value[1])*100,2)}%"
+        Margin to Current Price: {round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
 @app.callback(dash.dependencies.Output(component_id='yahoo_plot', component_property= 'figure'),
