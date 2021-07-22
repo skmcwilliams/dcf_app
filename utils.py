@@ -17,7 +17,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from yahooquery import Ticker
-#from millify import millify
+from millify import millify
 
 class Indices:
     def __init__(self):
@@ -252,7 +252,7 @@ class DCF:
         
         
     def calculate_intrinsic_value(self,ticker,cash_flow_df, total_debt, cash_and_ST_investments, 
-                                      data, discount_rate,shares_outstanding): 
+                                      data, discount_rate,shares_outstanding,name): 
         pio.renderers.default = "browser"
         try:
            EPS_growth_5Y =  float(data['EPS next 5Y'].str.strip('%')) / 100
@@ -313,7 +313,7 @@ class DCF:
         df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cash_flow_list, 'Discounted Free Cash Flow': cash_flow_discounted_list})
         
         fig = px.bar(df,x='Year Out',y=['Free Cash Flow','Discounted Free Cash Flow'],barmode='group')
-        fig.update_layout(title=f'{ticker} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
+        fig.update_layout(title=f'{name} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
         y1 = [millify(i,precision=2) for i in df['Free Cash Flow']]
         y2 = [millify(i,precision=2) for i in df['Discounted Free Cash Flow']]
         texts = [y1,y2]
