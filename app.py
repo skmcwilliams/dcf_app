@@ -29,7 +29,7 @@ fv = FinViz()
 # obtain tickers in all major index ETFs
 index = Indices()
 vti = index.get_vti()
-tickers = vti['Ticker']
+tickers = vti['TICKER']
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
