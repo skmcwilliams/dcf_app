@@ -23,7 +23,7 @@ class Indices:
     def __init__(self):
         pass
     
-    def get_dia():
+    def get_dia(self):
         """dataframe of info of all tickers in Dow Jones Industrial Average"""
         url = 'https://www.dogsofthedow.com/dow-jones-industrial-average-companies.htm'
         request = requests.get(url,headers={'User-Agent': 'Mozilla/5.0'})
@@ -33,7 +33,7 @@ class Indices:
         return pulled_df
     
     
-    def get_spy():
+    def get_spy(self):
         """dataframe of info of all tickers in SPY"""
         url = 'https://www.slickcharts.com/sp500'
         request = requests.get(url,headers={'User-Agent': 'Mozilla/5.0'})
@@ -45,7 +45,7 @@ class Indices:
         df['Chg'] = pd.to_numeric(df['Chg'])
         return df
     
-    def get_qqq():
+    def get_qqq(self):
         """dataframe of info of all tickers in QQQ"""
         df = pd.DataFrame()
         urls = ['https://www.dividendmax.com/market-index-constituents/nasdaq-100',
@@ -63,7 +63,7 @@ class Indices:
         df = df.sort_values('Market Cap $bn',ascending=False)
         return df
     
-    def get_vti():
+    def get_vti(self):
         df = pd.read_csv('vti.csv',header=3)
         return df
     
