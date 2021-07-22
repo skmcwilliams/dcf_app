@@ -256,8 +256,16 @@ def update_pcf_chart(ticker_value):
         
     try:
         cash_and_ST_investments = balance_sheet.iloc[-1]['CashAndCashEquivalents']
+        while pd.isnull(cash_and_ST_investments):
+            for i in range(1,len(balance_sheet)):
+                cash_and_ST_investments = balance_sheet.iloc[-i]['CashAndCashEquivalents']
     except KeyError:
         cash_and_ST_investments = balance_sheet.iloc[-1]['CashCashEquivalentsAndShortTermInvestments']
+        while pd.isnull(cash_and_ST_investments):
+            for i in range(1,len(balance_sheet)):
+                cash_and_ST_investments = balance_sheet.iloc[-i]['CashCashEquivalentsAndShortTermInvestments']
+    
+    
     """
     cash_flow = cash_flow_df.iloc[-1]['FreeCashFlow']
 
