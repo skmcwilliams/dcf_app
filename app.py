@@ -305,7 +305,7 @@ def update_yahoo(ticker_value):
     yahoo_ratings.at[1,'Period'] = '1 Month Back' 
     yahoo_ratings.at[2,'Period'] = '2 Months Back'
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
-    name = vti['HOLDINGS'][vti['TICKER']==ticker_value][0]
+    name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
                             title=f"{name} Yahoo Recommendation Trends")
     ratings_fig.update_layout(legend_title='')
