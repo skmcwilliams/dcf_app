@@ -132,7 +132,7 @@ def update_ohlc_plot(ticker_value):
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category')
     ohlc_fig.update_layout(
-        title_text=f"{vti['HOLDINGS'][vti['TICKER']==ticker_value][0]} Price Chart",
+        title_text=f"{vti['HOLDINGS'][vti['TICKER']=='TSLA'].iloc[0]} Price Chart",
         xaxis=dict(
             rangeselector=dict(
                 buttons=list([
@@ -213,7 +213,7 @@ def update_historical_plot(ticker_value):
 
     # PLOT HISTORICAL CASH FLOWS
     millified = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
-    name = vti['HOLDINGS'][vti['TICKER']==ticker_value][0]
+    name = vti['HOLDINGS'][vti['TICKER']=='TSLA'].iloc[0]
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',
     title=f"{name} Historical Free Cash Flows",text=millified)
     return cf_fig
@@ -279,7 +279,7 @@ def update_pcf_chart(ticker_value):
     wacc = dcf.get_wacc(total_debt,total_equity,debt_payment,tax_rate,beta,treasury,ticker_value)
 
     # DCF VALUATION
-    name = vti['HOLDINGS'][vti['TICKER']==ticker_value][0]
+    name = vti['HOLDINGS'][vti['TICKER']=='TSLA'].iloc[0]
     intrinsic_value = dcf.calculate_intrinsic_value(ticker_value,
                                                 cash_flow_df, total_debt, 
                                                 cash_and_ST_investments, 
@@ -315,7 +315,7 @@ def update_yahoo(ticker_value):
 @app.callback(dash.dependencies.Output(component_id='finviz_plot', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_finviz(ticker_value):
-    name = vti['HOLDINGS'][vti['TICKER']==ticker_value][0]
+    name = vti['HOLDINGS'][vti['TICKER']=='TSLA'].iloc[0]
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
