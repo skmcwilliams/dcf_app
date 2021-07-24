@@ -31,6 +31,19 @@ index = Indices()
 vti = index.get_vti()
 tickers = vti['TICKER']
 
+def generate_table(dataframe):
+    max_rows=50
+    return html.Table([
+        html.Thead(
+            html.Tr([html.Th(col) for col in dataframe.columns])
+        ),
+        html.Tbody([
+            html.Tr([
+                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
+            ]) for i in range(min(len(dataframe), max_rows))
+        ])
+    ])
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -39,7 +52,7 @@ server = app.server
 app.layout = html.Div(children=[
     html.Div([
         html.H4(children='Discounted Cash Flows Model'),
-        html.H6(children= 'Code can be found here: https://github.com/skmcwilliams/dcf_app'),
+        html.H4(children= 'Code can be found here: https://github.com/skmcwilliams/dcf_app'),
         
         dcc.Dropdown(
             id='ticker',
@@ -52,7 +65,7 @@ app.layout = html.Div(children=[
             placeholder='Select or type ticker for valuation'
             ),
         
-       # dcc.Graph(id = 'ohlc_plot'),
+       dcc.Graph(id = 'ohlc_plot'),
         ]),
 
     #html.Div([
@@ -94,7 +107,8 @@ app.layout = html.Div(children=[
     ]),
     html.Div([
         dcc.Graph(id='proj_cashflows'),
-        html.H6(id='text'),
+        html.H4(children='Company Snapshot'),
+        html.Table(id='data_table'),
     ]),
     html.Div([
         dcc.Graph(id='yahoo_plot'),
@@ -111,7 +125,7 @@ app.layout = html.Div(children=[
 def update_ohlc_plot(ticker_value):
 
     # gather historical data for ticker and indices data
-    df = get_historical_data(str(ticker_value),'5Y','1d',True)
+    df = get_historical_data(ticker_value,'5Y','1d',True)
 
     ohlc_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
  
@@ -132,7 +146,10 @@ def update_ohlc_plot(ticker_value):
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category')
     ohlc_fig.update_layout(
-        title_text=f"{vti['HOLDINGS'][vti['TICKER']=='TSLA'].iloc[0]} Price Chart",
+        title_text=f"{vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]} Price Chart")
+    return ohlc_fig
+    """
+        ,
         xaxis=dict(
             rangeselector=dict(
                 buttons=list([
@@ -161,7 +178,8 @@ def update_ohlc_plot(ticker_value):
             type="date"
         )
     )
-    return ohlc_fig
+    """
+    
 
 """ CALLBACK FOR COMPARISON CHART"""
 @app.callback(dash.dependencies.Output(component_id='comp_plot', component_property= 'figure'),
@@ -201,7 +219,7 @@ def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
 
 """CALLBACK FOR HISTORICAL CASHFLOWS BAR CHART"""
 @app.callback(dash.dependencies.Output(component_id='hist_cashflows', component_property= 'figure'),
-              [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
+              [dash.dependencies.Input(component_id='ticker_df', component_property= 'figure')])
 def update_historical_plot(ticker_value):
     yf = Ticker(ticker_value)
     #GET QUARTERLY CASH FLOW
@@ -215,11 +233,11 @@ def update_historical_plot(ticker_value):
     millified = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',
-    title=f"{name} Historical Free Cash Flows",text=millified)
+    title = f"{name} Historical Free Cash Flows",text=millified)
     return cf_fig
 
 @app.callback(dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
-              dash.dependencies.Output(component_id='text', component_property= 'children'),
+              dash.dependencies.Output(component_id='data_table', component_property= 'children'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_pcf_chart(ticker_value):
     if ticker_value=='AAPL':
@@ -257,15 +275,11 @@ def update_pcf_chart(ticker_value):
             for i in range(1,len(balance_sheet)):
                 cash_and_ST_investments = balance_sheet.iloc[-i]['CashCashEquivalentsAndShortTermInvestments']
     
-    
-    """
-    cash_flow = cash_flow_df.iloc[-1]['FreeCashFlow']
-
     try:
         quick_ratio = balance_sheet.iloc[-1]['CurrentAssets']/balance_sheet.iloc[-1]['CurrentLiabilities']
     except KeyError:
         quick_ratio = 0
-    """  
+    
     # SET DCF VARIABLES
     total_equity = yf.summary_detail[ticker_value]['marketCap']
     try:
@@ -284,15 +298,15 @@ def update_pcf_chart(ticker_value):
                                                 cash_flow_df, total_debt, 
                                                 cash_and_ST_investments, 
                                                 finviz_df, wacc,shares_outstanding,name)
-    return intrinsic_value[0],f"Based on the Following:\
-        Total Debt: ${millify(total_debt,2)} | \
-        Tax Rate: {round(tax_rate*100,0)}% | \
-        Cash and Short-Term Investments: ${millify(cash_and_ST_investments,2)} | \
-        Beta: {round(beta,2)} | \
-        Market Rate of Return: 8.50% | \
-        Risk Free Rate (10-year Treasury): {round(treasury*100,2)}% | \
-        Resulting Valuation for {ticker_value}: ${round(intrinsic_value[1],2)}/share | \
-        Margin to Current Price: {round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"
+                                                
+
+    data = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','Beta','Market Rate of Return','Risk Free Rate',
+        f"{ticker_value} Valuation",'Margin to Current Price'],
+        'Value':[f'${millify(total_debt,2)}',round(tax_rate*100,0),f'${millify(cash_and_ST_investments,2)}',quick_ratio,
+    round(beta,2),'8.50%',f'{round(treasury*100,2)}%',f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
+    
+    table_df = pd.DataFrame.from_dict(data)
+    return intrinsic_value[0],generate_table(table_df)
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
 @app.callback(dash.dependencies.Output(component_id='yahoo_plot', component_property= 'figure'),
