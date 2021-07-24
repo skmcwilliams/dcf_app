@@ -65,7 +65,7 @@ app.layout = html.Div(children=[
             placeholder='Select or type ticker for valuation'
             ),
         
-       dcc.Graph(id = 'ohlc_plot'),
+        dcc.Graph(id = 'ohlc_plot'),
         ]),
 
     #html.Div([
@@ -125,7 +125,7 @@ app.layout = html.Div(children=[
 def update_ohlc_plot(ticker_value):
 
     # gather historical data for ticker and indices data
-    df = get_historical_data(ticker_value,'5Y','1d',True)
+    df = get_historical_data(ticker_value,'5Y','1d')
 
     ohlc_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
  
@@ -146,9 +146,7 @@ def update_ohlc_plot(ticker_value):
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category')
     ohlc_fig.update_layout(
-        title_text=f"{vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]} Price Chart")
-    return ohlc_fig
-    """
+        title_text=f"{vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]} Price Chart"
         ,
         xaxis=dict(
             rangeselector=dict(
@@ -178,7 +176,7 @@ def update_ohlc_plot(ticker_value):
             type="date"
         )
     )
-    """
+    return ohlc_fig
     
 
 """ CALLBACK FOR COMPARISON CHART"""
@@ -302,7 +300,7 @@ def update_pcf_chart(ticker_value):
 
     data = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','Beta','Market Rate of Return','Risk Free Rate',
         f"{ticker_value} Valuation",'Margin to Current Price'],
-        'Value':[f'${millify(total_debt,2)}',round(tax_rate*100,0),f'${millify(cash_and_ST_investments,2)}',quick_ratio,
+        'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,1)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),
     round(beta,2),'8.50%',f'{round(treasury*100,2)}%',f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
     
     table_df = pd.DataFrame.from_dict(data)

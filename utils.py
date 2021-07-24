@@ -67,10 +67,10 @@ class Indices:
         df = pd.read_csv('vti.csv',header=3)
         return df
     
-def get_historical_data(ticker,period,interval,adjust):
+def get_historical_data(ticker,period,interval):
     yf = Ticker(ticker)
     # pull historical stock data for SPY comparison
-    hist = yf.history(period=period,interval=interval,adj_ohlc=adjust).reset_index()
+    hist = yf.history(period=period,interval=interval).reset_index()
     for i in hist.columns:
         if 'date' not in i:
             hist.rename(columns={i:f'{ticker}_{i}'},inplace=True)
