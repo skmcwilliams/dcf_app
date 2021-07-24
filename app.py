@@ -188,7 +188,7 @@ def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
     ticker_hist = get_historical_data(ticker_value,period_value,interval_value)
     data_frames = [ticker_hist]
     for comp in comps_value:
-        df = get_historical_data(comp,period_value,interval_value,True)
+        df = get_historical_data(comp,period_value,interval_value)
         data_frames = data_frames.append(df)
     
     # marge indices df on ticker df
