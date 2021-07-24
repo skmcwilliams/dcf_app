@@ -68,40 +68,40 @@ app.layout = html.Div(children=[
         dcc.Graph(id = 'ohlc_plot'),
         ]),
 
-    #html.Div([
-     #   dcc.Dropdown(
-      #      id='comps',
-       #     options = [
-        #        {'label': i,'value': i} for i in tickers
-         #   ],
-          #  # value='IBM',
-           # searchable=True,
-            #clearable=True,
-            #multi=True,
-           # placeholder='Select or type tickers for comparison'
-           # ),
-       # dcc.Dropdown(
-        #    id='period',
-         #   options = [
-          #      {'label': i,'value': i} for i in ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
-          #  ],
-            # value='5y',
-           # searchable=True,
-            #clearable=True,
-            #placeholder='Select Period'
-            #),
-        #dcc.Dropdown(
-         #   id='interval',
-         #   options = [
-         #       {'label': i,'value': i} for i in ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
-          #  ],
-            # value='1d',
-           # searchable=True,
-            #clearable=True,
-            #placeholder='Select Interval'
-            #),
-        #dcc.Graph(id = 'comp_plot'),
-   # ]),
+    html.Div([
+        dcc.Dropdown(
+            id='comps',
+            options = [
+                {'label': i,'value': i} for i in tickers
+            ],
+            # value='IBM',
+            searchable=True,
+            clearable=True,
+            multi=True,
+            placeholder='Select or type tickers for comparison'
+            ),
+        dcc.Dropdown(
+            id='period',
+            options = [
+                {'label': i,'value': i} for i in ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
+            ],
+             value='5y',
+            searchable=True,
+            clearable=True,
+            placeholder='Select Period'
+            ),
+        dcc.Dropdown(
+            id='interval',
+            options = [
+                {'label': i,'value': i} for i in ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
+            ],
+            value='1d',
+            searchable=True,
+            clearable=True,
+            placeholder='Select Interval'
+            ),
+        dcc.Graph(id = 'comp_plot'),
+   ]),
     html.Div([
         dcc.Graph(id = 'hist_cashflows'),
     ]),
@@ -144,7 +144,6 @@ def update_ohlc_plot(ticker_value):
                     secondary_y=False)
    
     ohlc_fig.layout.yaxis2.showgrid=False
-    ohlc_fig.update_xaxes(type='category')
     ohlc_fig.update_layout(
         title_text=f"{vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]} Price Chart"
         ,
@@ -186,7 +185,7 @@ def update_ohlc_plot(ticker_value):
               dash.dependencies.Input(component_id='period', component_property= 'value'),
               dash.dependencies.Input(component_id='interval', component_property= 'value')])
 def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
-    ticker_hist = get_historical_data(ticker_value,period_value,interval_value,True)
+    ticker_hist = get_historical_data(ticker_value,period_value,interval_value)
     data_frames = [ticker_hist]
     for comp in comps_value:
         df = get_historical_data(comp,period_value,interval_value,True)
@@ -198,6 +197,7 @@ def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
 
     df[f'{ticker_value}_pct_change'] = (df[f'{ticker_value}_close']-df[f'{ticker_value}_close'].iloc[0])/df[f'{ticker_value}_close'].iloc[0]
     ticks = [i.split('_')[0] for i in df.columns if "symbol" in i]
+    name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     comp_fig = go.Figure()
     for comp in ticks:
         df[f'{comp}_pct_change'] = df[f'{comp}_close'].apply(lambda x: (x - df[f'{comp}_close'].iloc[0])/df[f'{comp}_close'].iloc[0])
@@ -210,7 +210,7 @@ def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
             autorange=True, # PLOTLY HAS NO AUTORANGE FEATURE, TRYING TO IMPLEMENT MANUALLY BUT NO DICE
             fixedrange=False, # PLOTLY HAS NO AUTORANGE FEATURE, TRYING TO IMPLEMENT MANUALLY BUT NO DICE
             ),
-        title_text=f"{ticker_value} vs. {comps_value} Historical Prices",
+        title_text=f"{name} vs. {comps_value} Historical Prices",
     )
 
     return comp_fig
@@ -300,7 +300,7 @@ def update_pcf_chart(ticker_value):
 
     data = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','Beta','Market Rate of Return','Risk Free Rate',
         f"{ticker_value} Valuation",'Margin to Current Price'],
-        'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,1)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),
+        'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),
     round(beta,2),'8.50%',f'{round(treasury*100,2)}%',f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
     
     table_df = pd.DataFrame.from_dict(data)
