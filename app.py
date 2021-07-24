@@ -182,7 +182,7 @@ def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
 
 """CALLBACK FOR HISTORICAL CASHFLOWS BAR CHART"""
 @app.callback(dash.dependencies.Output(component_id='hist_cashflows', component_property= 'figure'),
-              [dash.dependencies.Input(component_id='ticker', component_property= 'figure')])
+              [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_historical_plot(ticker_value):
     yf = Ticker(ticker_value)
     #GET QUARTERLY CASH FLOW
