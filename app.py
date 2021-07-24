@@ -67,41 +67,6 @@ app.layout = html.Div(children=[
         
         dcc.Graph(id = 'ohlc_plot'),
         ]),
-
-    html.Div([
-        dcc.Dropdown(
-            id='comps',
-            options = [
-                {'label': i,'value': i} for i in tickers
-            ],
-            # value='IBM',
-            searchable=True,
-            clearable=True,
-            multi=True,
-            placeholder='Select or type tickers for comparison'
-            ),
-        dcc.Dropdown(
-            id='period',
-            options = [
-                {'label': i,'value': i} for i in ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
-            ],
-             value='5y',
-            searchable=True,
-            clearable=True,
-            placeholder='Select Period'
-            ),
-        dcc.Dropdown(
-            id='interval',
-            options = [
-                {'label': i,'value': i} for i in ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
-            ],
-            value='1d',
-            searchable=True,
-            clearable=True,
-            placeholder='Select Interval'
-            ),
-        dcc.Graph(id = 'comp_plot'),
-   ]),
     html.Div([
         dcc.Graph(id = 'hist_cashflows'),
     ]),
@@ -213,14 +178,13 @@ def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
             ),
         title_text=f"{name} vs. {comps_value} Historical Prices",
     )
-
     return comp_fig
 
 """CALLBACK FOR HISTORICAL CASHFLOWS BAR CHART"""
 @app.callback(dash.dependencies.Output(component_id='hist_cashflows', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker_df', component_property= 'figure')])
 def update_historical_plot(ticker_value):
-    yf = Ticker(ticker_value)
+    yf = Ticker(str(ticker_value))
     #GET QUARTERLY CASH FLOW
     cash_flow_df = yf.cash_flow('a',True).reset_index()
     cash_flow_df = cash_flow_df.drop_duplicates(subset='asOfDate')
