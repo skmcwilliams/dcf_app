@@ -186,10 +186,11 @@ def update_ohlc_plot(ticker_value):
               dash.dependencies.Input(component_id='interval', component_property= 'value')])
 def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
     ticker_hist = get_historical_data(ticker_value,period_value,interval_value)
-    data_frames = [ticker_hist]
-    for comp in comps_value:
-        df = get_historical_data(comp,period_value,interval_value)
-        data_frames = data_frames.append(df)
+    data_frames = []
+    data_frames = data_frames.append(ticker_hist)
+    for comp in list(comps_value):
+        temp_df = get_historical_data(comp,period_value,interval_value)
+        data_frames = data_frames.append(temp_df)
     
     # marge indices df on ticker df
     df = reduce(lambda  left,right: pd.merge(left,right,on=['date'],
@@ -229,7 +230,10 @@ def update_historical_plot(ticker_value):
 
     # PLOT HISTORICAL CASH FLOWS
     millified = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
-    name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
+    try:
+        name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
+    except IndexError:
+        name = ticker_value
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',
     title = f"{name} Historical Free Cash Flows",text=millified)
     return cf_fig
