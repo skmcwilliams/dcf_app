@@ -59,6 +59,9 @@ app.layout = html.Div(children=[
         dcc.Graph(id = 'hist_cashflows'),
     ]),
     html.Div([
+        dcc.Graph(id='yahoo_earnings_plot'),
+    ]),
+    html.Div([
         html.H6(children='Company Snapshot'),
     ]),
     html.Div([
@@ -74,7 +77,7 @@ app.layout = html.Div(children=[
         dcc.Graph(id='calcs_table')
     ]),
     html.Div([
-        dcc.Graph(id='yahoo_plot'),
+        dcc.Graph(id='yahoo_ratings_plot'),
     ]),
     html.Div([
         dcc.Graph(id='finviz_plot'),
@@ -202,6 +205,23 @@ def update_historical_plot(ticker_value):
     title = f"{name} Historical Free Cash Flows",text=millified)
     return cf_fig
 
+"""CALLBACK FOR YAHOO EARNINGS PLOT"""
+@app.callback(dash.dependencies.Output(component_id='yahoo_earnings_plot', component_property= 'figure'),
+              [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
+def update_yahoo_earnings(ticker_value):
+    yf = Ticker(ticker_value)
+    yahoo_earnings = yf.earning_history.reset_index()
+    yahoo_earnings.rename(columns={'period':'Period'},inplace=True)
+    yahoo_earnings.at[0,'Period'] = 'Current'
+    yahoo_earnings.at[1,'Period'] = '1 Month Back' 
+    yahoo_earnings.at[2,'Period'] = '2 Months Back'
+    yahoo_earnings.at[3,'Period'] = '3 Months Back' 
+    name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
+    earnings_fig = px.bar(yahoo_earnings,x='period',y=['epsActual','epsEstimate'],
+                            title=f"{name} Yahoo Earnings Trends")
+    earnings_fig.update_layout(legend_title='')
+    return earnings_fig
+
 @app.callback(dash.dependencies.Output(component_id='data_table', component_property= 'figure'),
             dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
             dash.dependencies.Output(component_id='calcs_table', component_property= 'figure'),
@@ -294,9 +314,9 @@ def update_pcf_chart(ticker_value):
     return metrics_fig,intrinsic_value[0],calcs_fig
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
-@app.callback(dash.dependencies.Output(component_id='yahoo_plot', component_property= 'figure'),
+@app.callback(dash.dependencies.Output(component_id='yahoo_ratings_plot', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
-def update_yahoo(ticker_value):
+def update_yahoo_ratings(ticker_value):
     yf = Ticker(ticker_value)
     yahoo_ratings = yf.recommendation_trend.reset_index()
     yahoo_ratings.rename(columns={'period':'Period'},inplace=True)
