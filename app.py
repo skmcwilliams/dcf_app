@@ -197,10 +197,7 @@ def update_historical_plot(ticker_value):
 
     # PLOT HISTORICAL CASH FLOWS
     millified = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
-    try:
-        name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    except IndexError:
-        name = ticker_value
+    name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',
     title = f"{name} Historical Free Cash Flows",text=millified)
     return cf_fig
@@ -215,11 +212,21 @@ def update_yahoo_earnings(ticker_value):
     yahoo_earnings.at[0,'Period'] = 'Current'
     yahoo_earnings.at[1,'Period'] = '1 Month Back' 
     yahoo_earnings.at[2,'Period'] = '2 Months Back'
-    yahoo_earnings.at[3,'Period'] = '3 Months Back' 
+    yahoo_earnings.at[3,'Period'] = '3 Months Back'
+    
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],
                             title=f"{name} Yahoo Earnings Trends")
     earnings_fig.update_layout(legend_title='')
+
+    y1 = [millify(i,precision=2) for i in yahoo_earnings['epsActual']]
+    y2 = [millify(i,precision=2) for i in yahoo_earnings['epsEstimate']]
+    texts = [y1,y2]
+    for i, t in enumerate(texts):
+        earnings_fig.data[i].text = t
+        earnings_fig.data[i].textposition = 'outside'
+   
+
     return earnings_fig
 
 @app.callback(dash.dependencies.Output(component_id='data_table', component_property= 'figure'),
