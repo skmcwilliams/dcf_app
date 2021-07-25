@@ -213,9 +213,9 @@ def update_yahoo_earnings(ticker_value):
     yahoo_earnings.at[1,'Period'] = '1 Month Back' 
     yahoo_earnings.at[2,'Period'] = '2 Months Back'
     yahoo_earnings.at[3,'Period'] = '3 Months Back'
-    
+
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],
+    earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
                             title=f"{name} Yahoo Earnings Trends")
     earnings_fig.update_layout(legend_title='')
 
