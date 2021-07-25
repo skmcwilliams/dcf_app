@@ -59,7 +59,7 @@ app.layout = html.Div(children=[
             options = [
                 {'label': i,'value': i} for i in tickers
             ],
-            # value='IBM',
+            value=np.random.choice(tickers),
             searchable=True,
             clearable=True,
             placeholder='Select or type ticker for valuation'
@@ -206,11 +206,8 @@ def update_historical_plot(ticker_value):
               dash.dependencies.Output(component_id='data_table', component_property= 'children'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_pcf_chart(ticker_value):
-    if ticker_value=='AAPL':
-        key='demo'
-    else:
-        keys= ['3da65237f17cee96481b2251702509d1','3a1649ceeafc5888ec99181c59cb5f8b']
-        key= np.random.choice(keys)
+    keys= ['3da65237f17cee96481b2251702509d1','3a1649ceeafc5888ec99181c59cb5f8b']
+    key= np.random.choice(keys)
     yf = Ticker(ticker_value)
     finviz_df = fv.fundamentals(ticker_value)
     #GET QUARTERLY CASH FLOW AND BALANCE SHEET
