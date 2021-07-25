@@ -264,7 +264,7 @@ def update_pcf_chart(ticker_value):
 
     data = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','Beta','Market Rate of Return','Risk Free Rate',
         f"{ticker_value} Valuation",'Margin to Current Price'],
-        'Source':['Balance Sheet','Income Statement','Balance Sheet','Balance Sheet','Model Calculation','S&P Average Return','Model Calculation','Valuation vs. Current Price'],
+        'Source':['Balance Sheet','Income Statement','Balance Sheet','Balance Sheet','Model Calculation','S&P Average Return','10-year Treasury','Model Calculation','Valuation vs. Current Price'],
         'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),
     round(beta,2),'8.50%',f'{round(treasury*100,2)}%',f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
     
