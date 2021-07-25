@@ -209,10 +209,10 @@ def update_yahoo_earnings(ticker_value):
     yf = Ticker(ticker_value)
     yahoo_earnings = yf.earning_history.reset_index()
     yahoo_earnings.rename(columns={'period':'Period'},inplace=True)
-    yahoo_earnings.at[0,'Period'] = 'Current'
-    yahoo_earnings.at[1,'Period'] = '1 Month Back' 
-    yahoo_earnings.at[2,'Period'] = '2 Months Back'
-    yahoo_earnings.at[3,'Period'] = '3 Months Back'
+    yahoo_earnings.at[0,'Period'] = '4 Quarters Back'
+    yahoo_earnings.at[1,'Period'] = '3 Quarters Back'
+    yahoo_earnings.at[2,'Period'] = '2 Quarters Back'
+    yahoo_earnings.at[3,'Period'] = '1 Quarter Back'
 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
