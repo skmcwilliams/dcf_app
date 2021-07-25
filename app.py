@@ -31,24 +31,12 @@ index = Indices()
 vti = index.get_vti()
 tickers = vti['TICKER']
 
-def generate_table(dataframe):
-    max_rows=50
-    return html.Table([
-        html.Thead(
-            html.Tr([html.Th(col) for col in dataframe.columns])
-        ),
-        html.Tbody([
-            html.Tr([
-                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
-            ]) for i in range(min(len(dataframe), max_rows))
-        ])
-    ])
-
-
+# STANDARD DASH APP LANGUAGE
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
+# CUSTOM DASH APP LANGUAGE
 app.layout = html.Div(children=[
     html.Div([
         html.H4(children='Discounted Cash Flows Model'),
@@ -74,7 +62,7 @@ app.layout = html.Div(children=[
         html.H6(children='Company Snapshot'),
     ]),
     html.Div([
-        html.Table(id='data_table'),
+        dcc.Graph(id='data_table'),
     ]),
     html.Div([
         dcc.Graph(id='proj_cashflows'),
@@ -210,7 +198,7 @@ def update_historical_plot(ticker_value):
     title = f"{name} Historical Free Cash Flows",text=millified)
     return cf_fig
 
-@app.callback(dash.dependencies.Output(component_id='data_table', component_property= 'children'),
+@app.callback(dash.dependencies.Output(component_id='data_table', component_property= 'figure'),
             dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
             dash.dependencies.Output(component_id='calcs_table', component_property= 'figure'),
               
@@ -275,10 +263,17 @@ def update_pcf_chart(ticker_value):
 
     metrics = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','Beta','Market Rate of Return','Risk Free Rate'],
         'Source':['Balance Sheet','Income Statement','Balance Sheet','Balance Sheet','Model Calculation','S&P Average Return','10-year Treasury'],
-        'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),
-    round(beta,2),'8.50%',f'{round(treasury*100,2)}%']}
+        'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),round(beta,2),'8.50%',f'{round(treasury*100,2)}%']}
     
     metrics_df = pd.DataFrame.from_dict(metrics)
+    metrics_fig = go.Figure(data=[go.Table(
+                header=dict(values=list(metrics_df.columns),
+                            fill_color='paleturquoise',
+                            align='left'),
+                cells=dict(values=[metrics_df[i] for i in metrics_df.columns],
+                        fill_color='silver',
+                        align='left'))
+                ])
 
     calculations = {'Metric': [f"{ticker_value} Valuation",'Margin to Current Price'],
                     'Value': [f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
@@ -292,7 +287,7 @@ def update_pcf_chart(ticker_value):
                         fill_color='silver',
                         align='left'))
                 ])
-    return intrinsic_value[0],generate_table(metrics_df),calcs_fig
+    return intrinsic_value[0],metrics_df,calcs_fig
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
 @app.callback(dash.dependencies.Output(component_id='yahoo_plot', component_property= 'figure'),
