@@ -52,7 +52,8 @@ server = app.server
 app.layout = html.Div(children=[
     html.Div([
         html.H4(children='Discounted Cash Flows Model'),
-        html.H4(children= 'Code can be found here: https://github.com/skmcwilliams/dcf_app'),
+        html.H6(children= 'Code can be found here: https://github.com/skmcwilliams/dcf_app'),
+        html.H6(children= 'If graph appears blank, no data is available'),
         
         dcc.Dropdown(
             id='ticker',
@@ -70,9 +71,16 @@ app.layout = html.Div(children=[
         dcc.Graph(id = 'hist_cashflows'),
     ]),
     html.Div([
-        dcc.Graph(id='proj_cashflows'),
-        html.H4(children='Company Snapshot'),
+        html.H6(children='Company Snapshot'),
+    ]),
+    html.Div([
         html.Table(id='data_table'),
+    ]),
+    html.Div([
+        dcc.Graph(id='proj_cashflows'),
+    ]),
+    html.Div([
+        dcc.Graph(id='calcs_table')
     ]),
     html.Div([
         dcc.Graph(id='yahoo_plot'),
@@ -108,6 +116,7 @@ def update_ohlc_plot(ticker_value):
                     secondary_y=False)
    
     ohlc_fig.layout.yaxis2.showgrid=False
+    ohlc_fig.update_xaxes(type='category')
     ohlc_fig.update_layout(
         title_text=f"{vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]} Price Chart"
         ,
@@ -136,7 +145,7 @@ def update_ohlc_plot(ticker_value):
             rangeslider=dict(
                 visible=True
             ),
-            type="date"
+            type="linear"
         )
     )
     return ohlc_fig
@@ -201,8 +210,10 @@ def update_historical_plot(ticker_value):
     title = f"{name} Historical Free Cash Flows",text=millified)
     return cf_fig
 
-@app.callback(dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
-              dash.dependencies.Output(component_id='data_table', component_property= 'children'),
+@app.callback(dash.dependencies.Output(component_id='data_table', component_property= 'children'),
+            dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
+            dash.dependencies.Output(component_id='calcs_table', component_property= 'figure'),
+              
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_pcf_chart(ticker_value):
     keys= ['3da65237f17cee96481b2251702509d1','3a1649ceeafc5888ec99181c59cb5f8b']
@@ -262,14 +273,26 @@ def update_pcf_chart(ticker_value):
                                                 finviz_df, wacc,shares_outstanding,name)
                                                 
 
-    data = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','Beta','Market Rate of Return','Risk Free Rate',
-        f"{ticker_value} Valuation",'Margin to Current Price'],
-        'Source':['Balance Sheet','Income Statement','Balance Sheet','Balance Sheet','Model Calculation','S&P Average Return','10-year Treasury','Model Calculation','Valuation vs. Current Price'],
+    metrics = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','Beta','Market Rate of Return','Risk Free Rate'],
+        'Source':['Balance Sheet','Income Statement','Balance Sheet','Balance Sheet','Model Calculation','S&P Average Return','10-year Treasury'],
         'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),
     round(beta,2),'8.50%',f'{round(treasury*100,2)}%',f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
     
-    table_df = pd.DataFrame.from_dict(data)
-    return intrinsic_value[0],generate_table(table_df)
+    metrics_df = pd.DataFrame.from_dict(metrics)
+
+    calculations = {'Metric': [f"{ticker_value} Valuation",'Margin to Current Price'],
+                    'Value': [f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
+
+    calcs_df = pd.DataFrame.from_dict(calculations)
+    calcs_fig = go.Figure(data=[go.Table(
+                header=dict(values=list(calcs_df.columns),
+                            fill_color='paleturquoise',
+                            align='left'),
+                cells=dict(values=[calcs_df[i] for i in calcs_df.columns],
+                        fill_color='silver',
+                        align='left'))
+                ])
+    return intrinsic_value[0],generate_table(metrics_df),calcs_fig
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
 @app.callback(dash.dependencies.Output(component_id='yahoo_plot', component_property= 'figure'),
