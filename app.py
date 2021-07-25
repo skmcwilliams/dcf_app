@@ -140,6 +140,7 @@ def update_ohlc_plot(ticker_value):
     
 
 """ CALLBACK FOR COMPARISON CHART"""
+"""
 @app.callback(dash.dependencies.Output(component_id='comp_plot', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value'),
               dash.dependencies.Input(component_id='comps', component_property= 'value'),
@@ -175,7 +176,7 @@ def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
         title_text=f"{name} vs. {comps_value} Historical Prices",
     )
     return comp_fig
-
+"""
 """CALLBACK FOR HISTORICAL CASHFLOWS BAR CHART"""
 @app.callback(dash.dependencies.Output(component_id='hist_cashflows', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
@@ -287,7 +288,7 @@ def update_pcf_chart(ticker_value):
                         fill_color='silver',
                         align='left'))
                 ])
-    return intrinsic_value[0],metrics_df,calcs_fig
+    return intrinsic_value[0],metrics_fig,calcs_fig
     
 """CALLBACK FOR YAHOO RATINGS PLOT"""
 @app.callback(dash.dependencies.Output(component_id='yahoo_plot', component_property= 'figure'),
