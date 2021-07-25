@@ -41,7 +41,7 @@ app.layout = html.Div(children=[
     html.Div([
         html.H4(children='Discounted Cash Flows Model'),
         html.H6(children= 'Code can be found here: https://github.com/skmcwilliams/dcf_app'),
-        html.H6(children= 'If graph appears blank, no data is available'),
+        html.H6(children= 'If chart does not update or appears blank, no data is available'),
         
         dcc.Dropdown(
             id='ticker',
@@ -279,8 +279,8 @@ def update_pcf_chart(ticker_value):
                         align='left'))
                 ])
 
-    calculations = {'Metric': [f"{ticker_value} Valuation",'Margin to Current Price'],
-                    'Value': [f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
+    calculations = {'Assumptions/Valuation': ['Years 1-5 Growth Rate Assumption','Years 6-10 Growth Rate Assumption','Years 11-20 Growth Rate Assumption',f"{ticker_value} Valuation",'Margin to Current Price'],
+                    'Value': [f'{round(intrinsic_value[2]*100,2)}%',f'{round(intrinsic_value[3]*100,2)}%',f'{round(intrinsic_value[4]*100,2)}%',f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
 
     calcs_df = pd.DataFrame.from_dict(calculations)
     calcs_fig = go.Figure(data=[go.Table(

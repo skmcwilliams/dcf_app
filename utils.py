@@ -321,7 +321,7 @@ class DCF:
             fig.data[i].text = t
             fig.data[i].textposition = 'outside'
     
-        return fig, intrinsic_value
+        return fig, intrinsic_value, EPS_growth_5Y, lt_growth,terminal_growth
     
     
     def get_fmp_dcf(self,ticker,key):
