@@ -145,7 +145,7 @@ def update_ohlc_plot(ticker_value):
             rangeslider=dict(
                 visible=True
             ),
-            type="linear"
+            type="date"
         )
     )
     return ohlc_fig
@@ -276,7 +276,7 @@ def update_pcf_chart(ticker_value):
     metrics = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','Beta','Market Rate of Return','Risk Free Rate'],
         'Source':['Balance Sheet','Income Statement','Balance Sheet','Balance Sheet','Model Calculation','S&P Average Return','10-year Treasury'],
         'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),
-    round(beta,2),'8.50%',f'{round(treasury*100,2)}%',f'${round(intrinsic_value[1],2)}/share',f"{round(((intrinsic_value[1]-current_price)/current_price)*100,2)}%"]}
+    round(beta,2),'8.50%',f'{round(treasury*100,2)}%']}
     
     metrics_df = pd.DataFrame.from_dict(metrics)
 
