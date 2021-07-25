@@ -59,7 +59,6 @@ app.layout = html.Div(children=[
             options = [
                 {'label': i,'value': i} for i in tickers
             ],
-            value=np.random.choice(tickers),
             searchable=True,
             clearable=True,
             placeholder='Select or type ticker for valuation'
