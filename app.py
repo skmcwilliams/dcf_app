@@ -199,7 +199,7 @@ def update_historical_plot(ticker_value):
     millified = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',
-    title = f"{name} Historical Free Cash Flows",text=millified)
+    title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'USD($)'})
     return cf_fig
 
 """CALLBACK FOR YAHOO EARNINGS PLOT"""
@@ -216,8 +216,9 @@ def update_yahoo_earnings(ticker_value):
 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
-                            title=f"{name} Yahoo Earnings Trends")
-    earnings_fig.update_layout(legend_title='')
+                            title=f"{name} Earnings Per Share Trend (Yahoo)",labels={'epsActual':'Actual EPS',
+                                                                    'epsEstimate': 'Wall Steet EPS Estimate'})
+    earnings_fig.update_layout(legend_title='',yaxis_title='USD ($)')
 
     y1 = [millify(i,precision=2) for i in yahoo_earnings['epsActual']]
     y2 = [millify(i,precision=2) for i in yahoo_earnings['epsEstimate']]
@@ -333,8 +334,13 @@ def update_yahoo_ratings(ticker_value):
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
-                            title=f"{name} Yahoo Recommendation Trends")
-    ratings_fig.update_layout(legend_title='')
+                            title=f"{name} Recommendation Trend (Yahoo)",
+                            labels={'strongBuy': 'Strong Buy',
+                                    'buy':'Buy',
+                                    'hold':'Hold',
+                                    'sell':'Sell',
+                                    'strongSell':'Strong Sell'})
+    ratings_fig.update_layout(legend_title='',yaxis_title='Count')
     return ratings_fig
 
 """CALLBACK FOR FINVIZ RATINGS PLOT"""
@@ -345,7 +351,8 @@ def update_finviz(ticker_value):
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
-    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings per FinViz")
+    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings (FinViz)")
+    fv_fig.update_layout(yaxis_title='Count')
     return fv_fig
 
 
