@@ -225,7 +225,7 @@ def update_yahoo_earnings(ticker_value):
     texts = [y1,y2]
     for i, t in enumerate(texts):
         earnings_fig.data[i].text = t
-        earnings_fig.data[i].textposition = 'outside'
+        earnings_fig.data[i].textposition = 'inside'
    
 
     return earnings_fig
@@ -334,8 +334,7 @@ def update_yahoo_ratings(ticker_value):
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
-                                    title=f"{name} Recommendation Trend",color_discrete_sequence=['navy','paleturquoise','purple','silver','violet'],
-                                    text=['strongBuy','buy','hold','sell','strongSell'])
+                                    title=f"{name} Recommendation Trend",color_discrete_sequence=['navy','paleturquoise','purple','silver','violet'])
     ratings_fig.update_layout(legend_title='',yaxis_title='Count')
     return ratings_fig
 
@@ -347,7 +346,7 @@ def update_finviz(ticker_value):
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
-    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings",color_discrete_sequence=['navy'],text='rating')
+    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings",color_discrete_sequence=['navy'])
     fv_fig.update_layout(yaxis_title='Count')
     return fv_fig
 
