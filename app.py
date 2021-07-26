@@ -294,8 +294,8 @@ def update_pcf_chart(ticker_value):
                                                 
 
     metrics = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','WACC','Beta','Market Rate of Return','Risk Free Rate'],
-        'Source':['Balance Sheet','Income Statement','Balance Sheet','Balance Sheet','Model','Model','S&P Average Return','10-year Treasury'],
-        'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),f'{round(wacc*100,2)}%',round(beta,2),'8.50%',f'{round(treasury*100,2)}%']}
+        'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),f'{round(wacc*100,2)}%',round(beta,2),'8.50%',f'{round(treasury*100,2)}%'],
+        'Source':['Balance Sheet','Income Statement','Balance Sheet','Balance Sheet','Model','Model','S&P Average Return','10-year Treasury']}
     
     metrics_df = pd.DataFrame.from_dict(metrics)
     metrics_fig = go.Figure(data=[go.Table(
