@@ -351,8 +351,9 @@ def update_finviz(ticker_value):
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings[finviz_ratings['rating'].isin(['Upgrade','Downgrade'])]
     finviz_ratings = finviz_ratings['rating'].value_counts().to_frame()
-    # finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
+    # finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
+    
     # fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings",color_discrete_sequence=['navy'],labels={'ratings':'Rating'})
    #  fv_fig.update_layout(yaxis_title='Count')
     fv_fig = go.Figure(go.Indicator(
