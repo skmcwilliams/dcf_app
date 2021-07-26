@@ -350,8 +350,9 @@ def update_finviz(ticker_value):
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings[finviz_ratings['rating'].isin(['Upgrade','Downgrade'])]
+    year = str(finviz_ratings.at[0,'date'][-2:])
+    finviz_ratings = finviz_ratings[finviz_ratings['date']==year] #only same-year ratings
     finviz_ratings = finviz_ratings['rating'].value_counts().to_frame()
-    finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
     # finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     
     # fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings",color_discrete_sequence=['navy'],labels={'ratings':'Rating'})
@@ -360,7 +361,7 @@ def update_finviz(ticker_value):
         mode = "gauge+number",
         value = (finviz_ratings['Upgrade']/finviz_ratings['Downgrade'])*100,
         domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': "2021 Recommendation Gauge"},
+        title = {'text': f"20{year} Recommendation Gauge"},
         gauge = {
         'axis': {'range': [None, 100], 'tickwidth': 3, 'tickcolor': "black"},
         'bar': {'color': "silver"},
