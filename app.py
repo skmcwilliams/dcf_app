@@ -91,19 +91,19 @@ app.layout = html.Div(children=[
 def update_ohlc_plot(ticker_value):
 
     # gather historical data for ticker and indices data
-    df = get_historical_data(ticker_value,'5Y','1d')
+    df = get_historical_data(ticker_value,'5Y','30m')
 
     ohlc_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
  
     #include OHLC (already comes with rangeselector)
-    ohlc_fig.add_trace(go.Candlestick(x=df['date'],
-                     open=df[f'{ticker_value}_open'], 
-                     high=df[f'{ticker_value}_high'],
-                     low=df[f'{ticker_value}_low'], 
-                     close=df[f'{ticker_value}_close'],name='Daily Candlestick'),secondary_y=True)
-    
-    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_200_sma'],name='200-day SMA',line=dict(color='cyan')),secondary_y=True)
-    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_50_sma'],name='50-day SMA',line=dict(color='navy')),secondary_y=True)
+    #ohlc_fig.add_trace(go.Candlestick(x=df['date'],
+     #                open=df[f'{ticker_value}_open'], 
+      #               high=df[f'{ticker_value}_high'],
+       #              low=df[f'{ticker_value}_low'], 
+        #             close=df[f'{ticker_value}_close'],name='Daily Candlestick'),secondary_y=True)
+    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_avg_price'], fill='tozeroy',skip_invalid=True, name='Price',line=dict(color='silver')),secondary_y=True)
+    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_200_sma'],name='200-day SMA',skip_invalid=True,line=dict(color='cyan')),secondary_y=True)
+    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_50_sma'],name='50-day SMA',skip_invalid=True,line=dict(color='navy')),secondary_y=True)
     
     # include a go.Bar trace for volume
     ohlc_fig.add_trace(go.Bar(x=df['date'], y=df[f'{ticker_value}_volume'],name='Volume'),
