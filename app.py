@@ -334,14 +334,12 @@ def update_yahoo_ratings(ticker_value):
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
-                                    labels={'strongBuy': 'Strong Buy',
+                                    title=f"{name} Recommendation Trend (Yahoo)")
+    ratings_fig.update_layout(legend_title='',yaxis_title='Count',labels={'strongBuy': 'Strong Buy',
                                             'buy':'Buy',
                                             'hold':'Hold',
                                             'sell':'Sell',
-                                            'strongSell':'Strong Sell'},
-                                    title=f"{name} Recommendation Trend (Yahoo)",
-                                    )
-    ratings_fig.update_layout(legend_title='',yaxis_title='Count')
+                                            'strongSell':'Strong Sell'})
     return ratings_fig
 
 """CALLBACK FOR FINVIZ RATINGS PLOT"""
