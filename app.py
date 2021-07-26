@@ -91,7 +91,7 @@ app.layout = html.Div(children=[
 def update_ohlc_plot(ticker_value):
 
     # gather historical data for ticker and indices data
-    df = get_historical_data(ticker_value,'5Y','30m')
+    df = get_historical_data(ticker_value,'5Y','1d')
 
     ohlc_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
  
@@ -349,10 +349,27 @@ def update_yahoo_ratings(ticker_value):
 def update_finviz(ticker_value):
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     finviz_ratings = fv.get_ratings(ticker_value)
-    finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
+    finviz_ratings = finviz_ratings[finviz_ratings['rating'].isin(['Upgrade','Downgrade'])]
+    finviz_ratings = finviz_ratings['rating'].value_counts().to_frame()
+    # finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
-    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings",color_discrete_sequence=['navy'],labels={'ratings':'Rating'})
-    fv_fig.update_layout(yaxis_title='Count')
+    # fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings",color_discrete_sequence=['navy'],labels={'ratings':'Rating'})
+   #  fv_fig.update_layout(yaxis_title='Count')
+    fv_fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = (finviz_ratings['Upgrade']/finviz_ratings['Downgrade'])*100,
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        title = {'text': "2021 Recommendation Gauge"},
+        gauge = {
+        'axis': {'range': [None, 100], 'tickwidth': 3, 'tickcolor': "black"},
+        'bar': {'color': "silver"},
+        'bgcolor': "white",
+        'borderwidth': 4,
+        'bordercolor': "silver",
+        'steps': [
+            {'range': [0, 50], 'color': 'red'},
+            {'range': [50, 75], 'color': 'yellow'},
+            {'range': [75, 100], 'color': 'green'}]}))
     
     return fv_fig
 
