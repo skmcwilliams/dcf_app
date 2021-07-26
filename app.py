@@ -336,6 +336,11 @@ def update_yahoo_ratings(ticker_value):
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
                                     title=f"{name} Recommendation Trend",color_discrete_sequence=['green','palegreen','silver','yellow','red'])
     ratings_fig.update_layout(legend_title='',yaxis_title='Count')
+
+    texts = [yahoo_ratings['strongBuy'],yahoo_ratings['buy'],yahoo_ratings['hold'],yahoo_ratings['sell'],yahoo_ratings['strongSell']]
+    for i, t in enumerate(texts):
+        ratings_fig.data[i].text = t
+        ratings_fig.data[i].textposition = 'inside'
     return ratings_fig
 
 """CALLBACK FOR FINVIZ RATINGS PLOT"""
@@ -348,6 +353,7 @@ def update_finviz(ticker_value):
     finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
     fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings",color_discrete_sequence=['navy'],labels={'ratings':'Rating'})
     fv_fig.update_layout(yaxis_title='Count')
+    
     return fv_fig
 
 
