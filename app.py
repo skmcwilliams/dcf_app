@@ -199,7 +199,7 @@ def update_historical_plot(ticker_value):
     millified = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',
-    title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'USD($)'})
+    title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'USD ($)'})
     return cf_fig
 
 """CALLBACK FOR YAHOO EARNINGS PLOT"""
@@ -334,12 +334,13 @@ def update_yahoo_ratings(ticker_value):
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
-                            title=f"{name} Recommendation Trend (Yahoo)",
-                            labels={'strongBuy': 'Strong Buy',
-                                    'buy':'Buy',
-                                    'hold':'Hold',
-                                    'sell':'Sell',
-                                    'strongSell':'Strong Sell'})
+                                    labels={'strongBuy': 'Strong Buy',
+                                            'buy':'Buy',
+                                            'hold':'Hold',
+                                            'sell':'Sell',
+                                            'strongSell':'Strong Sell'},
+                                    title=f"{name} Recommendation Trend (Yahoo)",
+                                    )
     ratings_fig.update_layout(legend_title='',yaxis_title='Count')
     return ratings_fig
 
