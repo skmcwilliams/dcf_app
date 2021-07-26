@@ -215,7 +215,8 @@ def update_yahoo_earnings(ticker_value):
     yahoo_earnings.at[3,'Period'] = '1 Quarter Back'
 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
+    earnings_fig = px.scatter(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
+                            size = ['epsActual','epsEstimate'],
                             color_discrete_sequence=['navy','paleturquoise'],
                             title=f"{name} Quarterly Earnings Per Share")
     earnings_fig.update_layout(legend_title='',yaxis_title='USD ($)')
@@ -226,7 +227,6 @@ def update_yahoo_earnings(ticker_value):
     for i, t in enumerate(texts):
         earnings_fig.data[i].text = t
         earnings_fig.data[i].textposition = 'inside'
-   
 
     return earnings_fig
 
