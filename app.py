@@ -350,7 +350,7 @@ def update_finviz(ticker_value):
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     finviz_ratings = fv.get_ratings(ticker_value).reset_index()
     finviz_ratings = finviz_ratings[finviz_ratings['rating'].isin(['Upgrade','Downgrade'])]
-    year = str(finviz_ratings.at['date'].iloc[0][-2:])
+    year = str(finviz_ratings['date'].iloc[0][-2:])
     finviz_ratings = finviz_ratings[finviz_ratings['date']==year] #only same-year ratings
     finviz_ratings = finviz_ratings['rating'].value_counts().to_frame()
     # finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
