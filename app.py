@@ -198,7 +198,7 @@ def update_historical_plot(ticker_value):
     # PLOT HISTORICAL CASH FLOWS
     millified = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',
+    cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',color='paleturquoise',
     title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'USD ($)'})
     return cf_fig
 
@@ -216,7 +216,7 @@ def update_yahoo_earnings(ticker_value):
 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
-                            title=f"{name} Earnings Per Share Trend (Yahoo)")
+                            title=f"{name} Quarterly Earnings Per Share",color=['paleturquoise','silver'])
     earnings_fig.update_layout(legend_title='',yaxis_title='USD ($)')
 
     y1 = [millify(i,precision=2) for i in yahoo_earnings['epsActual']]
@@ -333,7 +333,7 @@ def update_yahoo_ratings(ticker_value):
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
-                                    title=f"{name} Recommendation Trend (Yahoo)")
+                                    title=f"{name} Recommendation Trend")
     ratings_fig.update_layout(legend_title='',yaxis_title='Count')
     return ratings_fig
 
@@ -345,7 +345,7 @@ def update_finviz(ticker_value):
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
-    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings (FinViz)")
+    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings",color='paleturquoise')
     fv_fig.update_layout(yaxis_title='Count')
     return fv_fig
 
