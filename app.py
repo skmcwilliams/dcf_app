@@ -348,7 +348,7 @@ def update_yahoo_ratings(ticker_value):
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_finviz(ticker_value):
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    finviz_ratings = fv.get_ratings(ticker_value)
+    finviz_ratings = fv.get_ratings(ticker_value).reset_index()
     finviz_ratings = finviz_ratings[finviz_ratings['rating'].isin(['Upgrade','Downgrade'])]
     year = str(finviz_ratings.at[0,'date'][-2:])
     finviz_ratings = finviz_ratings[finviz_ratings['date']==year] #only same-year ratings
