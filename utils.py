@@ -261,11 +261,7 @@ class DCF:
             EPS_growth_5Y = 0.15 # set to 15%, unavailable EPS data means large / volatile growth
 
         lt_growth = EPS_growth_5Y*0.5 # 1/2 of initial growth
-        
-        if lt_growth > 0.10: # double digit growth rate indicates higher growth, in turn higher mid-term growth to match
-            terminal_growth = 0.5*lt_growth
-        else:
-            terminal_growth = min(0.05,0.5*lt_growth)
+        terminal_growth = max(0.05,0.3*lt_growth)
     
         """
         print(f"FinViz Years 1-5 Growth Rate (5yr EPS): {EPS_growth_5Y*100}%")
