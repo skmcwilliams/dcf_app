@@ -41,7 +41,7 @@ app.layout = html.Div(children=[
     html.Div([
         html.H4(children='Discounted Cash Flows Model'),
         html.H6(children= 'Code can be found here: https://github.com/skmcwilliams/dcf_app'),
-        html.H6(children= 'If chart does not update or appears blank, no data is available'),
+        html.H6(children= 'If a chart does not update or appears blank, no data is available'),
         
         dcc.Dropdown(
             id='ticker',
@@ -198,7 +198,7 @@ def update_historical_plot(ticker_value):
     # PLOT HISTORICAL CASH FLOWS
     millified = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',color='paleturquoise',
+    cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',
     title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'USD ($)'})
     return cf_fig
 
@@ -216,7 +216,7 @@ def update_yahoo_earnings(ticker_value):
 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
-                            title=f"{name} Quarterly Earnings Per Share",color=['paleturquoise','silver'])
+                            title=f"{name} Quarterly Earnings Per Share")
     earnings_fig.update_layout(legend_title='',yaxis_title='USD ($)')
 
     y1 = [millify(i,precision=2) for i in yahoo_earnings['epsActual']]
@@ -345,7 +345,7 @@ def update_finviz(ticker_value):
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith('21')] #only recent ratings
-    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings",color='paleturquoise')
+    fv_fig = px.histogram(finviz_ratings, x="rating",title=f"{name} 2021 Investment Bank Ratings")
     fv_fig.update_layout(yaxis_title='Count')
     return fv_fig
 
