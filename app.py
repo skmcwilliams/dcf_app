@@ -216,8 +216,7 @@ def update_yahoo_earnings(ticker_value):
 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
-                            title=f"{name} Earnings Per Share Trend (Yahoo)",labels={'epsActual':'Actual EPS',
-                                                                    'epsEstimate': 'Wall Steet EPS Estimate'})
+                            title=f"{name} Earnings Per Share Trend (Yahoo)")
     earnings_fig.update_layout(legend_title='',yaxis_title='USD ($)')
 
     y1 = [millify(i,precision=2) for i in yahoo_earnings['epsActual']]
@@ -335,11 +334,7 @@ def update_yahoo_ratings(ticker_value):
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
                                     title=f"{name} Recommendation Trend (Yahoo)")
-    ratings_fig.update_layout(legend_title='',yaxis_title='Count',labels={'strongBuy': 'Strong Buy',
-                                            'buy':'Buy',
-                                            'hold':'Hold',
-                                            'sell':'Sell',
-                                            'strongSell':'Strong Sell'})
+    ratings_fig.update_layout(legend_title='',yaxis_title='Count')
     return ratings_fig
 
 """CALLBACK FOR FINVIZ RATINGS PLOT"""
