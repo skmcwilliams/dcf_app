@@ -55,7 +55,7 @@ app.layout = html.Div(children=[
         dcc.Graph(id='yahoo_earnings_plot'),
     ]),
     html.Div([
-        html.H6(children='Company Snapshot'),
+        dcc.Markdown(children='###### Company Snapshot'),
     ]),
     html.Div([
         dcc.Graph(id='data_table'),
@@ -64,16 +64,18 @@ app.layout = html.Div(children=[
         dcc.Graph(id='proj_cashflows'),
     ]),
     html.Div([
-        html.H6(children='Valuation Result'),
+        dcc.Markdown(children='###### Valuation Result'),
     ]),
     html.Div([
         dcc.Graph(id='calcs_table')
     ]),
     html.Div([
         dcc.Graph(id='yahoo_ratings_plot'),
+        dcc.Markdown(children='Based on ratings published on Yahoo'),
     ]),
     html.Div([
         dcc.Graph(id='finviz_plot'),
+        dcc.Markdown(children='Based on investment bank recommendations published on FinViz')
     ]),
 ])
 
@@ -357,7 +359,7 @@ def update_finviz(ticker_value):
         mode = "gauge+number",
         value = float(round((finviz_ratings.at['Upgrade','rating']/finviz_ratings['rating'].sum())*100,2)),
         domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': f"{name} 20{year} Recommendation Gauge"},
+        title = {'text': f"{name} 20{year} Sentiment Gauge"},
         gauge = {
         'axis': {'range': [None, 100], 'tickwidth': 2, 'tickcolor': "silver"},
         'bar': {'color': "cyan"},
