@@ -256,13 +256,13 @@ class DCF:
         return wacc
         
         
-    def intrinsic_value(self,ticker,cash_flow_df, total_debt, cash_and_ST_investments, 
+    def intrinsic_value(self,cash_flow_df, total_debt, cash_and_ST_investments, 
                                       data, discount_rate,shares_outstanding,name):
         
         def calc_cashflow():
             cf = cash_flow
             for year in range(1,6):
-                cf *= (1 + EPS_growth_5Y)
+                cf *= (1 + st_growth)
                 dcf = round(cf/((1 + discount_rate)**year),0)   
                 yield cf,dcf
             for year in range(6,11):
@@ -274,16 +274,13 @@ class DCF:
                 dcf = round(cf/((1 + discount_rate)**year),0)   
                 yield cf,dcf
             
-                
-        
-        pio.renderers.default = "browser"
         try:
-           EPS_growth_5Y =  float(data['EPS next 5Y'].str.strip('%')) / 100
+           st_growth =  float(data['EPS next 5Y'].str.strip('%')) / 100
         
         except ValueError: # means EPS next 5Y is string, so cannot be divided, onto substitute method
-            EPS_growth_5Y = 0.15 # set to 15%, unavailable EPS data means large / volatile growth
+            st_growth = 0.15 # set to 15%, unavailable EPS data means large / volatile growth
 
-        lt_growth = EPS_growth_5Y*0.5 # 1/2 of initial growth
+        lt_growth = st_growth*0.5 # 1/2 of initial growth
         if lt_growth < 0.10:
             terminal_growth = max(0.05,0.3*lt_growth)
         else:
@@ -295,31 +292,6 @@ class DCF:
         cashflows = list(calc_cashflow())
         cf_list = [i[0] for i in cashflows]
         dcf_list = [i[1] for i in cashflows]
-        """
-        cf_list=[]
-        dcf_list=[]
-        
-        # Years 1 to 5
-        for year in range(1, 6):
-            cash_flow*=(1 + EPS_growth_5Y)        
-            cf_list.append(cash_flow)
-            cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
-            dcf_list.append(cash_flow_discounted)
-
-        # Years 6 to 20
-        for year in range(6, 11):
-            cash_flow*=(1 + lt_growth)
-            cf_list.append(cash_flow)
-            cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
-            dcf_list.append(cash_flow_discounted)
-           # print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
-            
-        for year in range(11, 21):
-            cash_flow*=(1 + terminal_growth)
-            cf_list.append(cash_flow)
-            cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
-            dcf_list.append(cash_flow_discounted)
-        """
          
         intrinsic_value = (sum(dcf_list) - total_debt + cash_and_ST_investments)/shares_outstanding
         df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cf_list, 'Discounted Free Cash Flow': dcf_list})
@@ -333,7 +305,7 @@ class DCF:
             fig.data[i].text = t
             fig.data[i].textposition = 'outside'
     
-        return fig, intrinsic_value, EPS_growth_5Y, lt_growth,terminal_growth
+        return fig, intrinsic_value, st_growth, lt_growth,terminal_growth
     
     
     def get_fmp_dcf(self,ticker,key):

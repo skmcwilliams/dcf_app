@@ -138,46 +138,7 @@ def update_price_plot(ticker_value):
         )
     )
     return price_fig
-    
 
-""" CALLBACK FOR COMPARISON CHART"""
-"""
-@app.callback(dash.dependencies.Output(component_id='comp_plot', component_property= 'figure'),
-              [dash.dependencies.Input(component_id='ticker', component_property= 'value'),
-              dash.dependencies.Input(component_id='comps', component_property= 'value'),
-              dash.dependencies.Input(component_id='period', component_property= 'value'),
-              dash.dependencies.Input(component_id='interval', component_property= 'value')])
-def update_comp_chart(ticker_value,comps_value,period_value,interval_value):
-    ticker_hist = get_historical_data(ticker_value,period_value,interval_value)
-    data_frames = []
-    data_frames = data_frames.append(ticker_hist)
-    for comp in list(comps_value):
-        temp_df = get_historical_data(comp,period_value,interval_value)
-        data_frames = data_frames.append(temp_df)
-    
-    # marge indices df on ticker df
-    df = reduce(lambda  left,right: pd.merge(left,right,on=['date'],
-                                            how='inner'), data_frames)
-
-    df[f'{ticker_value}_pct_change'] = (df[f'{ticker_value}_close']-df[f'{ticker_value}_close'].iloc[0])/df[f'{ticker_value}_close'].iloc[0]
-    ticks = [i.split('_')[0] for i in df.columns if "symbol" in i]
-    name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    comp_fig = go.Figure()
-    for comp in ticks:
-        df[f'{comp}_pct_change'] = df[f'{comp}_close'].apply(lambda x: (x - df[f'{comp}_close'].iloc[0])/df[f'{comp}_close'].iloc[0])
-        comp_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{comp}_pct_change'],name=f'{comp}'))
-
-    comp_fig.update_xaxes(type='category')
-    comp_fig.update_layout(
-        yaxis = dict(
-            tickformat = '.0%',
-            autorange=True, # PLOTLY HAS NO AUTORANGE FEATURE, TRYING TO IMPLEMENT MANUALLY BUT NO DICE
-            fixedrange=False, # PLOTLY HAS NO AUTORANGE FEATURE, TRYING TO IMPLEMENT MANUALLY BUT NO DICE
-            ),
-        title_text=f"{name} vs. {comps_value} Historical Prices",
-    )
-    return comp_fig
-"""
 """CALLBACK FOR HISTORICAL CASHFLOWS BAR CHART"""
 @app.callback(dash.dependencies.Output(component_id='hist_cashflows', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
@@ -221,7 +182,6 @@ def update_yahoo_earnings(ticker_value):
     for i, t in enumerate(texts):
         earnings_fig.data[i].text = t
         earnings_fig.data[i].textposition = 'inside'
-   
 
     return earnings_fig
 
@@ -284,10 +244,7 @@ def update_pcf_chart(ticker_value):
 
     # DCF VALUATION
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    intrinsic_value = dcf.intrinsic_value(ticker_value,
-                                                cash_flow_df, total_debt, 
-                                                cash_and_ST_investments, 
-                                                finviz_df, wacc,shares_outstanding,name)
+    intrinsic_value = dcf.intrinsic_value(cash_flow_df, total_debt, cash_and_ST_investments,finviz_df, wacc,shares_outstanding,name)
                                                 
 
     metrics = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','WACC','Beta','Market Rate of Return','Risk Free Rate'],
