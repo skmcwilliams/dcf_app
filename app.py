@@ -55,7 +55,7 @@ app.layout = html.Div(children=[
         dcc.Graph(id='yahoo_earnings_plot'),
     ]),
     html.Div([
-        dcc.Markdown(children='###### Company Snapshot'),
+        dcc.Markdown(children='######   Company Snapshot'),
     ]),
     html.Div([
         dcc.Graph(id='data_table'),
@@ -64,18 +64,17 @@ app.layout = html.Div(children=[
         dcc.Graph(id='proj_cashflows'),
     ]),
     html.Div([
-        dcc.Markdown(children='###### Valuation Result'),
+        dcc.Markdown(children='######   Valuation Result'),
     ]),
     html.Div([
         dcc.Graph(id='calcs_table')
     ]),
     html.Div([
         dcc.Graph(id='yahoo_ratings_plot'),
-        dcc.Markdown(children='Based on ratings published on Yahoo'),
     ]),
     html.Div([
         dcc.Graph(id='finviz_plot'),
-        dcc.Markdown(children='Based on investment bank recommendations published on FinViz')
+        dcc.Markdown(children='All data collected via Yahoo Finance and FinViz, please see code for detail'),
     ]),
 ])
 
