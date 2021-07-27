@@ -19,6 +19,11 @@ from plotly.subplots import make_subplots
 from yahooquery import Ticker
 from millify import millify
 
+
+def readable_nums(num_list):
+    for num in num_list:
+        yield millify(num,precision=2)
+        
 class Indices:
     def __init__(self):
         pass
@@ -310,8 +315,8 @@ class DCF:
         
         fig = px.bar(df,x='Year Out',y=['Free Cash Flow','Discounted Free Cash Flow'],barmode='group',color_discrete_sequence=['navy','paleturquoise'])
         fig.update_layout(title=f'{name} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
-        y1 = [millify(i,precision=2) for i in df['Free Cash Flow']]
-        y2 = [millify(i,precision=2) for i in df['Discounted Free Cash Flow']]
+        y1 = list(readable_nums(df['Free Cash Flow']))
+        y2 = list(readable_nums(df['Discounted Free Cash Flow']))
         texts = [y1,y2]
         for i, t in enumerate(texts):
             fig.data[i].text = t

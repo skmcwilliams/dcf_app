@@ -6,7 +6,7 @@ Created on Sat Mar  6 08:15:10 2021
 @author: skm
 """
 
-from utils import DCF, FinViz, Indices,get_10_year, get_historical_data,make_ohlc
+from utils import DCF, FinViz, Indices,get_10_year, get_historical_data,make_ohlc,readable_nums
 from yahooquery import Ticker
 import pandas as pd
 from functools import reduce
@@ -23,6 +23,7 @@ from millify import millify
 index = Indices()
 vti = index.get_vti()
 tickers = vti['TICKER']
+
 
 # STANDARD DASH APP LANGUAGE
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -46,7 +47,7 @@ app.layout = html.Div(children=[
             placeholder='Select or type ticker for valuation'
             ),
         
-        dcc.Graph(id = 'ohlc_plot'),
+        dcc.Graph(id = 'price_plot'),
         ]),
     html.Div([
         dcc.Graph(id = 'hist_cashflows'),
@@ -80,14 +81,14 @@ app.layout = html.Div(children=[
 
 
 """ CALLBACK FOR PRICE CHART"""
-@app.callback(dash.dependencies.Output(component_id='ohlc_plot', component_property= 'figure'),
+@app.callback(dash.dependencies.Output(component_id='price_plot', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
-def update_ohlc_plot(ticker_value):
+def update_price_plot(ticker_value):
 
     # gather historical data for ticker and indices data
     df = get_historical_data(ticker_value,'5Y','1d')
 
-    ohlc_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
+    price_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
  
     #include OHLC (already comes with rangeselector)
     #ohlc_fig.add_trace(go.Candlestick(x=df['date'],
@@ -95,17 +96,17 @@ def update_ohlc_plot(ticker_value):
       #               high=df[f'{ticker_value}_high'],
        #              low=df[f'{ticker_value}_low'], 
         #             close=df[f'{ticker_value}_close'],name='Daily Candlestick'),secondary_y=True)
-    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_avg_price'], fill='tozeroy',skip_invalid=True, name='Price',line=dict(color='silver')),secondary_y=True)
-    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_200_sma'],name='200-day SMA',skip_invalid=True,line=dict(color='cyan')),secondary_y=True)
-    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_50_sma'],name='50-day SMA',skip_invalid=True,line=dict(color='navy')),secondary_y=True)
+    price_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_avg_price'], fill='tozeroy',skip_invalid=True, name='Price',line=dict(color='silver')),secondary_y=True)
+    price_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_200_sma'],name='200-day SMA',skip_invalid=True,line=dict(color='cyan')),secondary_y=True)
+    price_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_50_sma'],name='50-day SMA',skip_invalid=True,line=dict(color='navy')),secondary_y=True)
     
     # include a go.Bar trace for volume
-    ohlc_fig.add_trace(go.Bar(x=df['date'], y=df[f'{ticker_value}_volume'],name='Volume'),
+    price_fig.add_trace(go.Bar(x=df['date'], y=df[f'{ticker_value}_volume'],name='Volume'),
                     secondary_y=False)
    
-    ohlc_fig.layout.yaxis2.showgrid=False
-    ohlc_fig.update_xaxes(type='category')
-    ohlc_fig.update_layout(
+    price_fig.layout.yaxis2.showgrid=False
+    price_fig.update_xaxes(type='category')
+    price_fig.update_layout(
         title_text=f"{vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]} Price Chart"
         ,
         xaxis=dict(
@@ -136,7 +137,7 @@ def update_ohlc_plot(ticker_value):
             type="date"
         )
     )
-    return ohlc_fig
+    return price_fig
     
 
 """ CALLBACK FOR COMPARISON CHART"""
@@ -190,7 +191,7 @@ def update_historical_plot(ticker_value):
     cash_flow_df.insert(0,'Period',cash_flow_df['year']+'-'+cash_flow_df['periodType'])
 
     # PLOT HISTORICAL CASH FLOWS
-    millified = [millify(i,precision=2) for i in cash_flow_df['FreeCashFlow']]
+    millified = list(readable_nums(cash_flow_df['FreeCashFlow']))
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',color_discrete_sequence=['navy'],
     title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'USD ($)'})
@@ -214,8 +215,8 @@ def update_yahoo_earnings(ticker_value):
                             title=f"{name} Quarterly Earnings Per Share")
     earnings_fig.update_layout(legend_title='',yaxis_title='USD ($)')
 
-    y1 = [millify(i,precision=2) for i in yahoo_earnings['epsActual']]
-    y2 = [millify(i,precision=2) for i in yahoo_earnings['epsEstimate']]
+    y1 = list(readable_nums(yahoo_earnings['epsActual']))
+    y2 = list(readable_nums(yahoo_earnings['epsEstimate']))
     texts = [y1,y2]
     for i, t in enumerate(texts):
         earnings_fig.data[i].text = t
