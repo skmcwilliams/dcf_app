@@ -360,14 +360,14 @@ def update_finviz(ticker_value):
         title = {'text': f"20{year} Recommendation Gauge"},
         gauge = {
         'axis': {'range': [None, 100], 'tickwidth': 3, 'tickcolor': "black"},
-        'bar': {'color': "silver"},
+        'bar': {'color': "cyan"},
         'bgcolor': "white",
         'borderwidth': 4,
-        'bordercolor': "silver",
+        'bordercolor': "black",
         'steps': [
             {'range': [0, 50], 'color': 'red'},
             {'range': [50, 75], 'color': 'yellow'},
-            {'range': [75, 100], 'color': 'green'}]}))
+            {'range': [75, 100], 'color': 'lightgreen'}]}))
     
     return fv_fig
 

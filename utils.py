@@ -17,7 +17,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from yahooquery import Ticker
-#from millify import millify
+from millify import millify
 
 class Indices:
     def __init__(self):
