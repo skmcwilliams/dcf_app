@@ -289,11 +289,12 @@ class DCF:
         cash_flow=cash_flow_df.iloc[-1]['FreeCashFlow']
         
         # Lists of projected cash flows from year 1 to year 20
+        """
         cash_flow_list = []
         cash_flow_discounted_list = []
         year_list = []
         
-        """
+        
         # Years 1 to 5
         for year in range(1, 6):
             year_list.append(year)
@@ -324,12 +325,12 @@ class DCF:
             #    print("\n")
         """
         # create calcs and associated lists
-        five_yr_calcs = list(calc_cashflow(1,5,EPS_growth_5Y,cash_flow))
-        ten_yr_calcs = list(calc_cashflow(6,10,lt_growth,cash_flow))
-        terminal_calcs = list(calc_cashflow(11,20,terminal_growth,cash_flow))
-        cash_flow_list = cash_flow_list.append(list(five_yr_calcs[1],ten_yr_calcs[1],terminal_calcs[1]))
-        cash_flow_discounted_list = cash_flow_discounted_list.append(list(five_yr_calcs[2],ten_yr_calcs[2],terminal_calcs[2]))
-        year_list = year_list.append(list(five_yr_calcs[3],ten_yr_calcs[3],terminal_calcs[3]))
+        five_yr_calcs = list(map(list,calc_cashflow(1,5,EPS_growth_5Y,cash_flow,discount_rate)))
+        ten_yr_calcs = list(map(list,calc_cashflow(6,10,lt_growth,cash_flow,discount_rate)))
+        terminal_calcs = list(map(list(calc_cashflow(11,20,terminal_growth,cash_flow,discount_rate))))
+        cash_flow_list = five_yr_calcs[1] + ten_yr_calcs[1] + terminal_calcs[1]
+        cash_flow_discounted_list = five_yr_calcs[2] + ten_yr_calcs[2] + terminal_calcs[2]
+        year_list = five_yr_calcs[0] + ten_yr_calcs[0] + terminal_calcs[0]
                 
         intrinsic_value = (sum(cash_flow_discounted_list) - total_debt + cash_and_ST_investments)/shares_outstanding
         df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cash_flow_list, 'Discounted Free Cash Flow': cash_flow_discounted_list})
