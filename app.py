@@ -357,13 +357,13 @@ def update_finviz(ticker_value):
         mode = "gauge+number",
         value = float(round((finviz_ratings.at['Upgrade','rating']/finviz_ratings['rating'].sum())*100,2)),
         domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': f"20{year} Recommendation Gauge"},
+        title = {'text': f"{name} 20{year} Recommendation Gauge"},
         gauge = {
-        'axis': {'range': [None, 100], 'tickwidth': 3, 'tickcolor': "black"},
+        'axis': {'range': [None, 100], 'tickwidth': 2, 'tickcolor': "silver"},
         'bar': {'color': "cyan"},
         'bgcolor': "white",
-        'borderwidth': 4,
-        'bordercolor': "black",
+        'borderwidth': 2,
+        'bordercolor': "silver",
         'steps': [
             {'range': [0, 50], 'color': 'red'},
             {'range': [50, 75], 'color': 'yellow'},
