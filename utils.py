@@ -289,8 +289,8 @@ class DCF:
         
         # Lists of projected cash flows from year 1 to year 20
         
-        cash_flow_list = []
-        cash_flow_discounted_list = []
+        #cash_flow_list = []
+        # cash_flow_discounted_list = []
         year_list = [i for i in range(1,21)]
         
         # Years 1 to 5
@@ -298,7 +298,7 @@ class DCF:
         cash_flow*=(1 + EPS_growth_5Y)        
         cash_flow_list = [cash_flow for i in range(5)]
         dcfs = list(map(lambda x,y: round(x/((1 + discount_rate)**y),0),cash_flow_list,range(1,6)))
-        cash_flow_discounted_list=cash_flow_discounted_list.append([i for i in dcfs]) 
+        cash_flow_discounted_list=[i for i in dcfs]
 
         # Years 6 to 20
         for year in range(6, 11):
