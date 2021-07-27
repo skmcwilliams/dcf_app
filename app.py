@@ -284,7 +284,7 @@ def update_pcf_chart(ticker_value):
 
     # DCF VALUATION
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    intrinsic_value = dcf.calculate_intrinsic_value(ticker_value,
+    intrinsic_value = dcf.intrinsic_value(ticker_value,
                                                 cash_flow_df, total_debt, 
                                                 cash_and_ST_investments, 
                                                 finviz_df, wacc,shares_outstanding,name)
