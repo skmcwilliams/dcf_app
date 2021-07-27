@@ -263,7 +263,7 @@ class DCF:
             for year in range(start,end+1):
                 cashflows= list(map(cashflow*(1 + growth_rate),range(start,end+1)))     
                 cashflow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
-                yield year,cashflow,cashflow_discounted
+                yield (year,cashflow,cashflow_discounted)
                 
             
         
@@ -289,11 +289,10 @@ class DCF:
         cash_flow=cash_flow_df.iloc[-1]['FreeCashFlow']
         
         # Lists of projected cash flows from year 1 to year 20
-        """
+        
         cash_flow_list = []
         cash_flow_discounted_list = []
         year_list = []
-        
         
         # Years 1 to 5
         for year in range(1, 6):
@@ -331,7 +330,7 @@ class DCF:
         cash_flow_list = five_yr_calcs[1] + ten_yr_calcs[1] + terminal_calcs[1]
         cash_flow_discounted_list = five_yr_calcs[2] + ten_yr_calcs[2] + terminal_calcs[2]
         year_list = five_yr_calcs[0] + ten_yr_calcs[0] + terminal_calcs[0]
-                
+        """    
         intrinsic_value = (sum(cash_flow_discounted_list) - total_debt + cash_and_ST_investments)/shares_outstanding
         df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cash_flow_list, 'Discounted Free Cash Flow': cash_flow_discounted_list})
         
