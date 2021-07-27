@@ -259,10 +259,11 @@ class DCF:
     def intrinsic_value(self,ticker,cash_flow_df, total_debt, cash_and_ST_investments, 
                                       data, discount_rate,shares_outstanding,name):
         
-        def calc_cashflow(start,end,growth_rate,cashflow,discount_rate):
+        def calc_cashflow(start,end,growth_rate):
+            cf = cash_flow
             for year in range(start,end+1):
-                cashflow *= (1 + growth_rate)    
-                yield cashflow
+                cf *= (1 + growth_rate)    
+                yield cf
                 
             
         
@@ -287,16 +288,13 @@ class DCF:
         """
         cash_flow=cash_flow_df.iloc[-1]['FreeCashFlow']
         
-        # Lists of projected cash flows from year 1 to year 20
-        
-        #cash_flow_list = []
-        # cash_flow_discounted_list = []
+        # REWRITING THIS TO BE MORE EFFICIENT
         year_list = [i for i in range(1,21)]
         
         # Years 1 to 5
         #for year in range(1, 6):
-        cash_flow*=(1 + EPS_growth_5Y)        
-        cash_flow_list = [cash_flow for i in range(5)]
+        #cash_flow*=(1 + EPS_growth_5Y)        
+        cash_flow_list = list(calc_cashflow(1,5,EPS_growth_5Y))
         dcfs = list(map(lambda x,y: round(x/((1 + discount_rate)**y),0),cash_flow_list,range(1,6)))
         cash_flow_discounted_list=[i for i in dcfs]
 
@@ -313,19 +311,7 @@ class DCF:
             cash_flow_list.append(cash_flow)
             cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
             cash_flow_discounted_list.append(cash_flow_discounted)
-            # print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
-            
-            #if year == 20:
-            #    print("\n")
-        """
-        # create calcs and associated lists
-        five_yr_calcs = list(map(list,calc_cashflow(1,5,EPS_growth_5Y,cash_flow,discount_rate)))
-        ten_yr_calcs = list(map(list,calc_cashflow(6,10,lt_growth,cash_flow,discount_rate)))
-        terminal_calcs = list(map(list(calc_cashflow(11,20,terminal_growth,cash_flow,discount_rate))))
-        cash_flow_list = five_yr_calcs[1] + ten_yr_calcs[1] + terminal_calcs[1]
-        cash_flow_discounted_list = five_yr_calcs[2] + ten_yr_calcs[2] + terminal_calcs[2]
-        year_list = five_yr_calcs[0] + ten_yr_calcs[0] + terminal_calcs[0]
-        """    
+        # DO NOT EDIT AFTER HERE  
         intrinsic_value = (sum(cash_flow_discounted_list) - total_debt + cash_and_ST_investments)/shares_outstanding
         df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cash_flow_list, 'Discounted Free Cash Flow': cash_flow_discounted_list})
         
