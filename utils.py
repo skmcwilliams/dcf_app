@@ -261,9 +261,8 @@ class DCF:
         
         def calc_cashflow(start,end,growth_rate,cashflow,discount_rate):
             for year in range(start,end+1):
-                cashflows= list(map(cashflow*(1 + growth_rate),range(start,end+1)))     
-                cashflow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
-                yield (year,cashflow,cashflow_discounted)
+                cashflow *= (1 + growth_rate)    
+                yield cashflow
                 
             
         
@@ -292,20 +291,17 @@ class DCF:
         
         cash_flow_list = []
         cash_flow_discounted_list = []
-        year_list = []
+        year_list = [i for i in range(1,21)]
         
         # Years 1 to 5
-        for year in range(1, 6):
-            year_list.append(year)
-            cash_flow*=(1 + EPS_growth_5Y)        
-            cash_flow_list.append(cash_flow)
-            cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
-            cash_flow_discounted_list.append(cash_flow_discounted)
+        #for year in range(1, 6):
+            #cash_flow*=(1 + EPS_growth_5Y)        
+        cash_flow_list = cash_flow_list.append(list(calc_cashflow(1,5,EPS_growth_5Y,cash_flow,discount_rate)))
+        cash_flow_discounted_list = cash_flow_discounted_list.append(list(map( lambda x,y:round(x/((1 + discount_rate)**y),0),cash_flow,range(1,6))))
             # print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
         
         # Years 6 to 20
         for year in range(6, 11):
-            year_list.append(year)
             cash_flow*=(1 + lt_growth)
             cash_flow_list.append(cash_flow)
             cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
@@ -313,7 +309,6 @@ class DCF:
            # print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
             
         for year in range(11, 21):
-            year_list.append(year)
             cash_flow*=(1 + terminal_growth)
             cash_flow_list.append(cash_flow)
             cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
