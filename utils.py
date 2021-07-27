@@ -281,8 +281,10 @@ class DCF:
             st_growth = 0.15 # set to 15%, unavailable EPS data means large / volatile growth
 
         lt_growth = st_growth*0.5 # 1/2 of initial growth
-        if lt_growth < 0.10:
-            terminal_growth = max(0.05,0.3*lt_growth)
+        if lt_growth <= 0.05:
+            terminal_growth = 0.03
+        elif lt_growth >=0.10:
+            terminal_growth = 0.5*lt_growth
         else:
             terminal_growth = 0.5*lt_growth
     
