@@ -19,13 +19,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from millify import millify
 
-
-
-
-# instantiate dcf and finviz classes
-dcf = DCF()
-fv = FinViz() 
-
 # obtain tickers in all major index ETFs
 index = Indices()
 vti = index.get_vti()
@@ -236,6 +229,8 @@ def update_yahoo_earnings(ticker_value):
               
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_pcf_chart(ticker_value):
+    dcf = DCF()
+    fv = FinViz() 
     keys= ['3da65237f17cee96481b2251702509d1','3a1649ceeafc5888ec99181c59cb5f8b']
     key= np.random.choice(keys)
     yf = Ticker(ticker_value)
@@ -347,11 +342,12 @@ def update_yahoo_ratings(ticker_value):
 @app.callback(dash.dependencies.Output(component_id='finviz_plot', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_finviz(ticker_value):
+    fv = FinViz() 
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
-    finviz_ratings = fv.get_ratings(ticker_value).reset_index()
+    finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings[finviz_ratings['rating'].isin(['Upgrade','Downgrade'])]
     year = str(finviz_ratings['date'].iloc[0][-2:])
-    finviz_ratings = finviz_ratings[finviz_ratings['date']==year] #only same-year ratings
+    finviz_ratings = finviz_ratings[finviz_ratings['date'].str.endswith(year)] #only same-year ratings
     finviz_ratings = finviz_ratings['rating'].value_counts().to_frame()
     # finviz_ratings = finviz_ratings.drop_duplicates(subset='firm') #ensure latest rating by each firm
     
@@ -359,7 +355,7 @@ def update_finviz(ticker_value):
    #  fv_fig.update_layout(yaxis_title='Count')
     fv_fig = go.Figure(go.Indicator(
         mode = "gauge+number",
-        value = (finviz_ratings['Upgrade']/finviz_ratings['Downgrade'])*100,
+        value = float(round((finviz_ratings.at['Upgrade','rating']/finviz_ratings['rating'].sum())*100,2)),
         domain = {'x': [0, 1], 'y': [0, 1]},
         title = {'text': f"20{year} Recommendation Gauge"},
         gauge = {
