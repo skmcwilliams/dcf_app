@@ -259,13 +259,22 @@ class DCF:
     def intrinsic_value(self,ticker,cash_flow_df, total_debt, cash_and_ST_investments, 
                                       data, discount_rate,shares_outstanding,name):
         
-        def calc_cashflow(start,end,growth_rate):
+        def calc_cashflow():
             cf = cash_flow
-            for year in range(start,end+1):
-                cf *= (1 + growth_rate)    
-                yield cf
-                
+            for year in range(1,6):
+                cf *= (1 + EPS_growth_5Y)
+                dcf = round(cf/((1 + discount_rate)**year),0)   
+                yield cf,dcf
+            for year in range(6,11):
+                cf *= (1 + lt_growth)
+                dcf = round(cf/((1 + discount_rate)**year),0)   
+                yield cf,dcf
+            for year in range(11,21):
+                cf *= (1 + terminal_growth)
+                dcf = round(cf/((1 + discount_rate)**year),0)   
+                yield cf,dcf
             
+                
         
         pio.renderers.default = "browser"
         try:
@@ -280,40 +289,40 @@ class DCF:
         else:
             terminal_growth = 0.5*lt_growth
     
-        """
-        print(f"FinViz Years 1-5 Growth Rate (5yr EPS): {EPS_growth_5Y*100}%")
-        print(f"Projected Years 6-10 Growth Rate: {round(lt_growth*100,2)}%")
-        print(f"Projected Years 11-20 Growth Rate: {round(terminal_growth*100,2)}%")
-        print(f"Discount Rate: {round(discount_rate*100,2)}%\n")
-        """
         cash_flow=cash_flow_df.iloc[-1]['FreeCashFlow']
         
-        # REWRITING THIS TO BE MORE EFFICIENT
         year_list = [i for i in range(1,21)]
+        cashflows = list(calc_cashflow())
+        cf_list = [i[0] for i in cashflows]
+        dcf_list = [i[1] for i in cashflows]
+        """
+        cf_list=[]
+        dcf_list=[]
         
         # Years 1 to 5
-        #for year in range(1, 6):
-        #cash_flow*=(1 + EPS_growth_5Y)        
-        cash_flow_list = list(calc_cashflow(1,5,EPS_growth_5Y))
-        dcfs = list(map(lambda x,y: round(x/((1 + discount_rate)**y),0),cash_flow_list,range(1,6)))
-        cash_flow_discounted_list=[i for i in dcfs]
+        for year in range(1, 6):
+            cash_flow*=(1 + EPS_growth_5Y)        
+            cf_list.append(cash_flow)
+            cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
+            dcf_list.append(cash_flow_discounted)
 
         # Years 6 to 20
         for year in range(6, 11):
             cash_flow*=(1 + lt_growth)
-            cash_flow_list.append(cash_flow)
+            cf_list.append(cash_flow)
             cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
-            cash_flow_discounted_list.append(cash_flow_discounted)
+            dcf_list.append(cash_flow_discounted)
            # print("Year " + str(year) + ": $" + str(cash_flow_discounted)) ## Print out the projected discounted cash flows
             
         for year in range(11, 21):
             cash_flow*=(1 + terminal_growth)
-            cash_flow_list.append(cash_flow)
+            cf_list.append(cash_flow)
             cash_flow_discounted = round(cash_flow/((1 + discount_rate)**year),0)
-            cash_flow_discounted_list.append(cash_flow_discounted)
-        # DO NOT EDIT AFTER HERE  
-        intrinsic_value = (sum(cash_flow_discounted_list) - total_debt + cash_and_ST_investments)/shares_outstanding
-        df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cash_flow_list, 'Discounted Free Cash Flow': cash_flow_discounted_list})
+            dcf_list.append(cash_flow_discounted)
+        """
+         
+        intrinsic_value = (sum(dcf_list) - total_debt + cash_and_ST_investments)/shares_outstanding
+        df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cf_list, 'Discounted Free Cash Flow': dcf_list})
         
         fig = px.bar(df,x='Year Out',y=['Free Cash Flow','Discounted Free Cash Flow'],barmode='group',color_discrete_sequence=['navy','paleturquoise'])
         fig.update_layout(title=f'{name} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
