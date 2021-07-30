@@ -155,7 +155,7 @@ def update_historical_plot(ticker_value):
     millified = list(readable_nums(cash_flow_df['FreeCashFlow']))
     name = vti['HOLDINGS'][vti['TICKER']==ticker_value].iloc[0]
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',color_discrete_sequence=['navy'],
-    title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'USD ($)'})
+    title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'Free Cash Flow ($)'})
     return cf_fig
 
 """CALLBACK FOR YAHOO EARNINGS PLOT"""
@@ -174,7 +174,7 @@ def update_yahoo_earnings(ticker_value):
     earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
                             color_discrete_sequence=['navy','paleturquoise'],
                             title=f"{name} Quarterly Earnings Per Share")
-    earnings_fig.update_layout(legend_title='',yaxis_title='USD ($)')
+    earnings_fig.update_layout(legend_title='',yaxis_title='Earnings ($)')
 
     y1 = list(readable_nums(yahoo_earnings['epsActual']))
     y2 = list(readable_nums(yahoo_earnings['epsEstimate']))
@@ -248,8 +248,7 @@ def update_pcf_chart(ticker_value):
                                                 
 
     metrics = {'Metric':['Total Debt','Tax Rate','Cash and Short-Term Investments','Quick Ratio','WACC','Beta','Market Rate of Return','Risk Free Rate'],
-        'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),f'{round(wacc*100,2)}%',round(beta,2),'8.50%',f'{round(treasury*100,2)}%'],
-        'Source':['Balance Sheet','Income Statement','Balance Sheet','Balance Sheet','Model','Model','S&P Average Return','10-year Treasury']}
+        'Value':[f'${millify(total_debt,2)}',f'{round(tax_rate*100,2)}%',f'${millify(cash_and_ST_investments,2)}',round(quick_ratio,2),f'{round(wacc*100,2)}%',round(beta,2),'8.50%',f'{round(treasury*100,2)}%']}
     
     metrics_df = pd.DataFrame.from_dict(metrics)
     metrics_fig = go.Figure(data=[go.Table(
@@ -318,11 +317,11 @@ def update_finviz(ticker_value):
         domain = {'x': [0, 1], 'y': [0, 1]},
         title = {'text': f"{name} 20{year} Sentiment Gauge"},
         gauge = {
-        'axis': {'range': [None, 100], 'tickwidth': 2, 'tickcolor': "silver"},
-        'bar': {'color': "cyan"},
+        'axis': {'range': [None, 100], 'tickwidth': 2, 'tickcolor': "black"},
+        'bar': {'color': "navy"},
         'bgcolor': "white",
         'borderwidth': 2,
-        'bordercolor': "silver",
+        'bordercolor': "black",
         'steps': [
             {'range': [0, 50], 'color': 'red'},
             {'range': [50, 75], 'color': 'yellow'},

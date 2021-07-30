@@ -296,12 +296,12 @@ class DCF:
         dcf_list = [i[1] for i in cashflows]
          
         intrinsic_value = (sum(dcf_list) - total_debt + cash_and_ST_investments)/shares_outstanding
-        df = pd.DataFrame.from_dict({'Year Out': year_list, 'Free Cash Flow': cf_list, 'Discounted Free Cash Flow': dcf_list})
+        df = pd.DataFrame.from_dict({'Year Out': year_list, 'Future Value': cf_list, 'Present Value': dcf_list})
         
-        fig = px.bar(df,x='Year Out',y=['Free Cash Flow','Discounted Free Cash Flow'],barmode='group',color_discrete_sequence=['navy','paleturquoise'])
-        fig.update_layout(title=f'{name} Projected Free Cash Flows',yaxis_title='USD ($)',legend_title='')
-        y1 = list(readable_nums(df['Free Cash Flow']))
-        y2 = list(readable_nums(df['Discounted Free Cash Flow']))
+        fig = px.bar(df,x='Year Out',y=['Future Value','Present Value'],barmode='group',color_discrete_sequence=['navy','paleturquoise'])
+        fig.update_layout(title=f'{name} Projected Free Cash Flows',yaxis_title='Free Cash Flow ($)',legend_title='')
+        y1 = list(readable_nums(df['Future Value']))
+        y2 = list(readable_nums(df['Present Value']))
         texts = [y1,y2]
         for i, t in enumerate(texts):
             fig.data[i].text = t
