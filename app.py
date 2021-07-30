@@ -318,7 +318,7 @@ def update_finviz(ticker_value):
         title = {'text': f"{name} 20{year} Sentiment Gauge"},
         gauge = {
         'axis': {'range': [None, 100], 'tickwidth': 2, 'tickcolor': "black"},
-        'bar': {'color': "navy"},
+        'bar': {'color': "gray"},
         'bgcolor': "white",
         'borderwidth': 2,
         'bordercolor': "black",
