@@ -83,7 +83,8 @@ app.layout = html.Div(children=[
 @app.callback(dash.dependencies.Output(component_id='price_plot', component_property= 'figure'),
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_price_plot(ticker_value):
-    name = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    name = ' '.join(names)
     # gather historical data for ticker and indices data
     df = get_historical_data(ticker_value,'5Y','1d')
 
@@ -152,7 +153,8 @@ def update_historical_plot(ticker_value):
 
     # PLOT HISTORICAL CASH FLOWS
     millified = list(readable_nums(cash_flow_df['FreeCashFlow']))
-    name = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    name = ' '.join(names)
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',color_discrete_sequence=['navy'],
     title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'Free Cash Flow ($)'})
     return cf_fig
@@ -169,7 +171,8 @@ def update_yahoo_earnings(ticker_value):
     yahoo_earnings.at[2,'Period'] = '2 Quarters Back'
     yahoo_earnings.at[3,'Period'] = '1 Quarter Back'
 
-    name = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    name = ' '.join(names)
     earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
                             color_discrete_sequence=['navy','paleturquoise'],
                             title=f"{name} Quarterly Earnings Per Share")
@@ -242,7 +245,8 @@ def update_pcf_chart(ticker_value):
     wacc = dcf.get_wacc(total_debt,total_equity,debt_payment,tax_rate,beta,treasury,ticker_value)
 
     # DCF VALUATION
-    name = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    name = ' '.join(names)
     intrinsic_value = dcf.intrinsic_value(cash_flow_df, total_debt, cash_and_ST_investments,finviz_df, wacc,shares_outstanding,name)
                                                 
 
@@ -284,7 +288,8 @@ def update_yahoo_ratings(ticker_value):
     yahoo_ratings.at[1,'Period'] = '1 Month Back' 
     yahoo_ratings.at[2,'Period'] = '2 Months Back'
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
-    name = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    name = ' '.join(names)
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['strongBuy','buy','hold','sell','strongSell'],
                                     title=f"{name} Recommendation Trend",color_discrete_sequence=['green','palegreen','silver','yellow','red'])
     ratings_fig.update_layout(legend_title='',yaxis_title='Count')
@@ -300,7 +305,8 @@ def update_yahoo_ratings(ticker_value):
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_finviz(ticker_value):
     fv = FinViz() 
-    name = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
+    name = ' '.join(names)
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings[finviz_ratings['rating'].isin(['Upgrade','Downgrade'])]
     year = str(finviz_ratings['date'].iloc[0][-2:])
