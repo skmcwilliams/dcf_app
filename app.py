@@ -113,31 +113,7 @@ def update_price_plot(ticker_value,period_value,interval_value):
     # gather historical data for ticker and indices data
     df = get_historical_data(ticker_value,period_value,interval_value)
 
-    price_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
- 
-    #include OHLC (already comes with rangeselector)
-    price_fig.add_trace(go.Candlestick(x=df['date'],
-                     open=df[f'{ticker_value}_open'], 
-                     high=df[f'{ticker_value}_high'],
-                     low=df[f'{ticker_value}_low'], 
-                     close=df[f'{ticker_value}_close'],name='Candlestick'),secondary_y=True)
-    price_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_avg_price'], fill='tozeroy',skip_invalid=True, name='Price',line=dict(color='silver')),secondary_y=True)
-    price_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_200_sma'],name='200-day SMA',skip_invalid=True,line=dict(color='cyan')),secondary_y=True)
-    price_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_50_sma'],name='50-day SMA',skip_invalid=True,line=dict(color='navy')),secondary_y=True)
-    
-    # include a go.Bar trace for volume
-    price_fig.add_trace(go.Bar(x=df['date'], y=df[f'{ticker_value}_volume'],name='Volume'),
-                    secondary_y=False)
-   
-    price_fig.layout.yaxis2.showgrid=False
-    price_fig.update_xaxes(type='category')
-    price_fig.update_layout(
-        title_text=f"{name} Price Chart"
-        ,
-        xaxis=dict(
-            type="date"
-        )
-    )
+    price_fig = make_ohlc(ticker_value,df)
     return price_fig
 
 """CALLBACK FOR HISTORICAL CASHFLOWS BAR CHART"""

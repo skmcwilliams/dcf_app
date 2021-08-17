@@ -76,12 +76,9 @@ def get_historical_data(ticker,period,interval):
     yf = Ticker(ticker)
     # pull historical stock data for SPY comparison
     hist = yf.history(period=period,interval=interval).reset_index()
-    for i in hist.columns:
-        if 'date' not in i:
-            hist.rename(columns={i:f'{ticker}_{i}'},inplace=True)
     hist['date'] = list(map(str,hist['date']))
     hist['Day'] = hist['date'].apply(lambda x: x.split()[0])
-    hist[f'{ticker}_avg_price'] = (hist[f'{ticker}_high']+hist[f'{ticker}_close']+hist[f'{ticker}_low'])/3
+    hist['avg_price'] = (hist['high']+hist['lose']+hist['ow'])/3
     
     sma_df = yf.history(period='max',interval='1d').reset_index()
     sma_df['date'] = list(map(str,sma_df['date']))
@@ -107,50 +104,21 @@ def make_ohlc(ticker,df):
  
     #include OHLC (already comes with rangeselector)
     ohlc_fig.add_trace(go.Candlestick(x=df['date'],
-                     open=df[f'{ticker}_open'], 
-                     high=df[f'{ticker}_high'],
-                     low=df[f'{ticker}_low'], 
-                     close=df[f'{ticker}_close'],name='Daily Candlestick'),secondary_y=True)
+                     open=df['open'], 
+                     high=df['high'],
+                     low=df['low'], 
+                     close=df['close'],name='OHLC'),secondary_y=True)
     
-    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker}_200_sma'],name='200-day SMA',line=dict(color='cyan')),secondary_y=True)
-    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker}_50_sma'],name='50-day SMA',line=dict(color='navy')),secondary_y=True)
+    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df['200_sma'],name='200 SMA',line=dict(color='cyan')),secondary_y=True)
+    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df['50_sma'],name='50 SMA',line=dict(color='navy')),secondary_y=True)
     
     # include a go.Bar trace for volume
-    ohlc_fig.add_trace(go.Bar(x=df['date'], y=df[f'{ticker}_volume'],name='Volume'),
+    ohlc_fig.add_trace(go.Bar(x=df['date'], y=df['volume'],name='Volume',marker_color='dodgerblue'),
                     secondary_y=False)
-   
+    #ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df['vwap'],name='vwap',line=dict(color='mediumslateblue')),secondary_y=True)
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category')
     ohlc_fig.update_layout(title_text=f'{ticker} Price Chart')
-    ohlc_fig.update_layout(
-        xaxis=dict(
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=1,
-                         label="1m",
-                         step="month",
-                         stepmode="backward"),
-                    dict(count=6,
-                         label="6m",
-                         step="month",
-                         stepmode="backward"),
-                    dict(count=1,
-                         label="YTD",
-                         step="year",
-                         stepmode="todate"),
-                    dict(count=1,
-                         label="1y",
-                         step="year",
-                         stepmode="backward"),
-                    dict(step="all")
-                ])
-            ),
-            rangeslider=dict(
-                visible=True
-            ),
-            type="date"
-        )
-    )
     return ohlc_fig
 
 def make_comp_chart(ticker,df,comps):
