@@ -87,7 +87,8 @@ def get_historical_data(ticker,period,interval):
     sma_df['50_sma'] = sma_df['close'].rolling(window=50).mean()
 
     df = pd.merge(hist,sma_df[['Day','200_sma','50_sma']],on='Day',how='left')
-    
+    intraday_df = df.groupby('Day').apply(vwap) 
+    df = pd.merge(df,intraday_df,on='date',how='left')
     return df
 
 def get_10_year():
@@ -98,6 +99,14 @@ def get_10_year():
     for k,v in ten_yr.items():
         treas = v/100
     return treas
+
+def vwap(x):
+    d={}
+    d['vwap'] = np.cumsum(x['volume'].values*x['avg_price'].values) / np.cumsum(x['volume'].values)
+    d['Day'] = x['Day']
+    d['date'] = x['date']
+    df = pd.DataFrame(data=d)
+    return df
 
 def make_ohlc(ticker,df):
     ohlc_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
@@ -115,7 +124,7 @@ def make_ohlc(ticker,df):
     # include a go.Bar trace for volume
     ohlc_fig.add_trace(go.Bar(x=df['date'], y=df['volume'],name='Volume',marker_color='dodgerblue'),
                     secondary_y=False)
-    #ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df['vwap'],name='vwap',line=dict(color='mediumslateblue')),secondary_y=True)
+    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df['vwap'],name='Daily VWAP',line=dict(color='mediumslateblue')),secondary_y=True)
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category',nticks=10,tickangle=15)
     ohlc_fig.update_layout(title_text=f'{ticker} Price Chart',xaxis=dict(rangeslider=dict(visible=False)))

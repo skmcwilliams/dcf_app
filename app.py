@@ -69,7 +69,7 @@ app.layout = html.Div(children=[
             placeholder='Select interval between data points'
             ),
         
-        dcc.Graph(id = 'price_plot',style={"height": "100%", "width": "80%"}),
+        dcc.Graph(id = 'price_plot'),
         ]),
     html.Div([
         dcc.Graph(id = 'hist_cashflows'),
