@@ -83,10 +83,10 @@ def get_historical_data(ticker,period,interval):
     sma_df = yf.history(period='max',interval='1d').reset_index()
     sma_df['date'] = list(map(str,sma_df['date']))
     sma_df['Day'] = sma_df['date'].apply(lambda x: x.split()[0])
-    sma_df[f'{ticker}_200_sma'] = sma_df['close'].rolling(window=200).mean()
-    sma_df[f'{ticker}_50_sma'] = sma_df['close'].rolling(window=50).mean()
+    sma_df['200_sma'] = sma_df['close'].rolling(window=200).mean()
+    sma_df['50_sma'] = sma_df['close'].rolling(window=50).mean()
 
-    df = pd.merge(hist,sma_df[['Day',f'{ticker}_200_sma',f'{ticker}_50_sma']],on='Day',how='left')
+    df = pd.merge(hist,sma_df[['Day','200_sma','50_sma']],on='Day',how='left')
     
     return df
 
