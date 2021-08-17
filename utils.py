@@ -124,7 +124,7 @@ def make_ohlc(ticker,df):
     # include a go.Bar trace for volume
     ohlc_fig.add_trace(go.Bar(x=df['date'], y=df['volume'],name='Volume',marker_color='dodgerblue'),
                     secondary_y=False)
-    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df['vwap'],name='Intraday VWAP',line=dict(color='mediumslateblue')),secondary_y=True)
+    ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df['vwap'],name='Intraday VWAP',line=dict(color='deepskyblue')),secondary_y=True)
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category',nticks=10,tickangle=15)
     ohlc_fig.update_layout(title_text=f'{ticker} Price Chart',xaxis=dict(rangeslider=dict(visible=False)))
