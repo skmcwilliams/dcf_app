@@ -22,6 +22,8 @@ from millify import millify
 # obtain tickers in all major index ETFs
 ticker_df = pd.read_csv('tickers.csv')
 tickers = ticker_df['Symbol']
+periods = ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
+intervals = ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
 
 
 # STANDARD DASH APP LANGUAGE
@@ -35,6 +37,7 @@ app.layout = html.Div(children=[
         html.H4(children='Discounted Cash Flows Model'),
         html.H6(children= 'Code can be found here: https://github.com/skmcwilliams/dcf_app'),
         html.H6(children= 'If a chart does not update or appears blank, no data is available'),
+        dcc.Markdown(children='Select Ticker below for valuation and plotting'),
         
         dcc.Dropdown(
             id='ticker',
@@ -44,6 +47,26 @@ app.layout = html.Div(children=[
             searchable=True,
             clearable=True,
             placeholder='Select or type ticker for valuation'
+            ),
+        dcc.Markdown(children='Select period and interval for price chart'),
+        dcc.Dropdown(
+            id='period',
+            options = [
+                {'label': i,'value': i} for i in periods
+            ],
+            searchable=False,
+            clearable=True,
+            placeholder='Select time period of data'
+            ),
+        
+        dcc.Dropdown(
+            id='interval',
+            options = [
+                {'label': i,'value': i} for i in intervals
+            ],
+            searchable=False,
+            clearable=True,
+            placeholder='Select interval between data points'
             ),
         
         dcc.Graph(id = 'price_plot'),
@@ -81,21 +104,23 @@ app.layout = html.Div(children=[
 
 """ CALLBACK FOR PRICE CHART"""
 @app.callback(dash.dependencies.Output(component_id='price_plot', component_property= 'figure'),
-              [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
-def update_price_plot(ticker_value):
+              [dash.dependencies.Input(component_id='ticker', component_property= 'value'),
+              dash.dependencies.Input(component_id='period', component_property= 'value'),
+              dash.dependencies.Input(component_id='interval', component_property= 'value')])
+def update_price_plot(ticker_value,period_value,interval_value):
     names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
     name = ' '.join(names)
     # gather historical data for ticker and indices data
-    df = get_historical_data(ticker_value,'5Y','1d')
+    df = get_historical_data(ticker_value,period_value,interval_value)
 
     price_fig = make_subplots(specs=[[{"secondary_y": True}]]) # creates ability to plot vol and $ change within main plot
  
     #include OHLC (already comes with rangeselector)
-    #ohlc_fig.add_trace(go.Candlestick(x=df['date'],
-     #                open=df[f'{ticker_value}_open'], 
-      #               high=df[f'{ticker_value}_high'],
-       #              low=df[f'{ticker_value}_low'], 
-        #             close=df[f'{ticker_value}_close'],name='Daily Candlestick'),secondary_y=True)
+    price_fig.add_trace(go.Candlestick(x=df['date'],
+                     open=df[f'{ticker_value}_open'], 
+                     high=df[f'{ticker_value}_high'],
+                     low=df[f'{ticker_value}_low'], 
+                     close=df[f'{ticker_value}_close'],name='Candlestick'),secondary_y=True)
     price_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_avg_price'], fill='tozeroy',skip_invalid=True, name='Price',line=dict(color='silver')),secondary_y=True)
     price_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_200_sma'],name='200-day SMA',skip_invalid=True,line=dict(color='cyan')),secondary_y=True)
     price_fig.add_trace(go.Scatter(x=df['date'],y=df[f'{ticker_value}_50_sma'],name='50-day SMA',skip_invalid=True,line=dict(color='navy')),secondary_y=True)
@@ -110,31 +135,7 @@ def update_price_plot(ticker_value):
         title_text=f"{name} Price Chart"
         ,
         xaxis=dict(
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=1,
-                         label="1m",
-                         step="month",
-                         stepmode="backward"),
-                    dict(count=6,
-                         label="6m",
-                         step="month",
-                         stepmode="backward"),
-                    dict(count=1,
-                         label="YTD",
-                         step="year",
-                         stepmode="todate"),
-                    dict(count=1,
-                         label="1y",
-                         step="year",
-                         stepmode="backward"),
-                    dict(step="all")
-                ])
-            ),
-            rangeslider=dict(
-                visible=True
-            ),
-            type="date"
+            type="category"
         )
     )
     return price_fig
@@ -190,7 +191,6 @@ def update_yahoo_earnings(ticker_value):
 @app.callback(dash.dependencies.Output(component_id='data_table', component_property= 'figure'),
             dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
             dash.dependencies.Output(component_id='calcs_table', component_property= 'figure'),
-              
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_pcf_chart(ticker_value):
     dcf = DCF()
