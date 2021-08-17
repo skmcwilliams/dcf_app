@@ -135,7 +135,7 @@ def update_price_plot(ticker_value,period_value,interval_value):
         title_text=f"{name} Price Chart"
         ,
         xaxis=dict(
-            type="category"
+            type="date"
         )
     )
     return price_fig

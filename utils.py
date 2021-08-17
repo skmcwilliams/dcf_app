@@ -79,9 +79,11 @@ def get_historical_data(ticker,period,interval):
     for i in hist.columns:
         if 'date' not in i:
             hist.rename(columns={i:f'{ticker}_{i}'},inplace=True)
+    hist['date'] = list(map(str,hist['date']))
+    hist['Day'] = hist['date'].apply(lambda x: x.split()[0])
     hist[f'{ticker}_avg_price'] = (hist[f'{ticker}_high']+hist[f'{ticker}_close']+hist[f'{ticker}_low'])/3
-    hist[f'{ticker}_200_sma'] = hist[f'{ticker}_avg_price'].rolling(window=200).mean()
-    hist[f'{ticker}_50_sma'] = hist[f'{ticker}_avg_price'].rolling(window=50).mean()
+    hist[f'{ticker}_200_sma'] = hist.groupy('Day')[f'{ticker}_avg_price'].rolling(window=200).mean()
+    hist[f'{ticker}_50_sma'] = hist.groupby('Day')[f'{ticker}_avg_price'].rolling(window=50).mean()
     return hist
 
 def get_10_year():
