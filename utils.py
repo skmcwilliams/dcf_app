@@ -118,7 +118,17 @@ def make_ohlc(ticker,df):
     #ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df['vwap'],name='vwap',line=dict(color='mediumslateblue')),secondary_y=True)
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category')
-    ohlc_fig.update_layout(title_text=f'{ticker} Price Chart')
+    ohlc_fig.update_layout(title_text=f'{ticker} Price Chart',
+    xaxis_tickformatstops = [
+        dict(dtickrange=[None, 1000], value="%H:%M:%S.%L ms"),
+        dict(dtickrange=[1000, 60000], value="%H:%M:%S s"),
+        dict(dtickrange=[60000, 3600000], value="%H:%M m"),
+        dict(dtickrange=[3600000, 86400000], value="%H:%M h"),
+        dict(dtickrange=[86400000, 604800000], value="%e. %b d"),
+        dict(dtickrange=[604800000, "M1"], value="%e. %b w"),
+        dict(dtickrange=["M1", "M12"], value="%b '%y M"),
+        dict(dtickrange=["M12", None], value="%Y Y")]
+    )
     return ohlc_fig
 
 def make_comp_chart(ticker,df,comps):
