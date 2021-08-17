@@ -118,7 +118,7 @@ def make_ohlc(ticker,df):
     #ohlc_fig.add_trace(go.Scatter(x=df['date'],y=df['vwap'],name='vwap',line=dict(color='mediumslateblue')),secondary_y=True)
     ohlc_fig.layout.yaxis2.showgrid=False
     ohlc_fig.update_xaxes(type='category',nticks=10,tickangle=15)
-    ohlc_fig.update_layout(title_text=f'{ticker} Price Chart',rangeslider=dict(visible=False))
+    ohlc_fig.update_layout(title_text=f'{ticker} Price Chart',xaxis=dict(rangeslider=dict(visible=False)))
     return ohlc_fig
 
 def make_comp_chart(ticker,df,comps):
