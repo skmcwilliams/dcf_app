@@ -83,7 +83,7 @@ def get_historical_data(ticker,period,interval):
     hist['Day'] = hist['date'].apply(lambda x: x.split()[0])
     hist[f'{ticker}_avg_price'] = (hist[f'{ticker}_high']+hist[f'{ticker}_close']+hist[f'{ticker}_low'])/3
     
-    sma_df = yf.history(ticker,'max','1d')
+    sma_df = yf.history(ticker,'5y','1d')
     sma_df['date'] = list(map(str,sma_df['date']))
     sma_df[f'{ticker}_avg_price'] = (sma_df[f'{ticker}_high']+sma_df[f'{ticker}_close']+sma_df[f'{ticker}_low'])/3
     sma_df['Day'] = sma_df[f'{ticker}_date'].apply(lambda x: x.split()[0])
