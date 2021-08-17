@@ -82,9 +82,17 @@ def get_historical_data(ticker,period,interval):
     hist['date'] = list(map(str,hist['date']))
     hist['Day'] = hist['date'].apply(lambda x: x.split()[0])
     hist[f'{ticker}_avg_price'] = (hist[f'{ticker}_high']+hist[f'{ticker}_close']+hist[f'{ticker}_low'])/3
-    hist[f'{ticker}_200_sma'] = hist.groupby('Day')[f'{ticker}_avg_price'].rolling(window=200).mean()
-    hist[f'{ticker}_50_sma'] = hist.groupby('Day')[f'{ticker}_avg_price'].rolling(window=50).mean()
-    return hist
+    
+    sma_df = yf.history(ticker,'max','1d')
+    sma_df['date'] = list(map(str,sma_df['date']))
+    sma_df[f'{ticker}_avg_price'] = (sma_df[f'{ticker}_high']+sma_df[f'{ticker}_close']+sma_df[f'{ticker}_low'])/3
+    sma_df['Day'] = sma_df[f'{ticker}_date'].apply(lambda x: x.split()[0])
+    sma_df[f'{ticker}_200_sma'] = sma_df[f'{ticker}_avg_price'].rolling(window=200).mean()
+    sma_df[f'{ticker}_50_sma'] = sma_df[f'{ticker}_avg_price'].rolling(window=50).mean()
+
+    df = pd.merge(hist,sma_df[['Day',f'{ticker}_200_sma',f'{ticker}_50_sma']],on='Day',how='left')
+    
+    return df
 
 def get_10_year():
     """get 10-year treasury from Yahoo Finance"""
