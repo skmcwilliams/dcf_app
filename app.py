@@ -34,15 +34,14 @@ server = app.server
 # CUSTOM DASH APP LANGUAGE
 app.layout = html.Div(children=[
     html.Div([
-        html.H4(children='Discounted Cash Flows Model'),
-        html.H6(children= 'Code can be found here: https://github.com/skmcwilliams/dcf_app'),
+        html.H4(children='Stock Visualization and Discounted Cash Flows Model'),
         html.H6(children= 'If a chart does not update or appears blank, no data is available'),
         dcc.Markdown(children='Select Ticker below for valuation and plotting'),
         
         dcc.Dropdown(
             id='ticker',
             options = [
-                {'label': i,'value': i} for i in tickers
+                {'label': i,'value': i} for i in tickers if '^' not in i and '/' not in i
             ],
             searchable=True,
             clearable=True,
@@ -97,7 +96,7 @@ app.layout = html.Div(children=[
     ]),
     html.Div([
         dcc.Graph(id='finviz_plot'),
-        dcc.Markdown(children='All data collected via Yahoo Finance and FinViz, please see code for detail'),
+        dcc.Markdown(children='All data collected via Yahoo Finance and FinViz, please see code for detail: https://github.com/skmcwilliams/dcf_app'),
     ]),
 ])
 
