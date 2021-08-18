@@ -304,7 +304,7 @@ def update_finviz(ticker_value):
         'bordercolor': "black",
         'steps': [
             {'range': [0, 50], 'color': 'red'},
-            {'range': [50, 75], 'color': 'yellow'},
+            {'range': [50, 75], 'color': 'orange'},
             {'range': [75, 100], 'color': 'lightgreen'}]}))
     
     return fv_fig
