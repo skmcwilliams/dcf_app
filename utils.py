@@ -221,12 +221,12 @@ class DCF:
         tax_rate = taxes_paid/earnings
         return tax_rate
     
-    def get_wacc(self,total_debt,equity,debt_pmt,tax_rate,beta,rfr,ticker):
+    def get_wacc(self,total_debt,equity,debt_pmt,tax_rate,beta,rfr,required_return):
         
         if type(beta) is str:
             beta=1.75
             
-        rm= 0.085
+        rm= required_return
         re= rfr+beta*(rm-rfr)
         
         if total_debt<1 or debt_pmt<1:

@@ -24,7 +24,7 @@ ticker_df = pd.read_csv('tickers.csv')
 tickers = ticker_df['Symbol']
 periods = ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
 intervals = ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
-
+rates = [0.05,0.075,0.10,0.15,0.2]
 
 # STANDARD DASH APP LANGUAGE
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -77,7 +77,17 @@ app.layout = html.Div(children=[
         dcc.Graph(id='yahoo_earnings_plot'),
     ]),
     html.Div([
-        dcc.Markdown(children='######   Company Snapshot'),
+        dcc.Markdown(children='Company Snapshot'),
+        dcc.Markdown(children='Select desired rate of return for valuation'),
+    dcc.Dropdown(
+            id='return_rate',
+            options = [
+                {'label': f"{i*100}.00%",'value': i} for i in rates
+            ],
+            searchable=False,
+            clearable=True,
+            placeholder='Select desired rate of return'
+            ),
     ]),
     html.Div([
         dcc.Graph(id='data_table'),
@@ -86,7 +96,7 @@ app.layout = html.Div(children=[
         dcc.Graph(id='proj_cashflows'),
     ]),
     html.Div([
-        dcc.Markdown(children='######   Valuation Result'),
+        dcc.Markdown(children='Valuation Result'),
     ]),
     html.Div([
         dcc.Graph(id='calcs_table')
@@ -164,10 +174,11 @@ def update_yahoo_earnings(ticker_value):
     return earnings_fig
 
 @app.callback(dash.dependencies.Output(component_id='data_table', component_property= 'figure'),
-            dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
-            dash.dependencies.Output(component_id='calcs_table', component_property= 'figure'),
-              [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
-def update_pcf_chart(ticker_value):
+              dash.dependencies.Output(component_id='proj_cashflows', component_property= 'figure'),
+              dash.dependencies.Output(component_id='calcs_table', component_property= 'figure'),
+              [dash.dependencies.Input(component_id='ticker', component_property= 'value'),
+              dash.dependencies.Input(component_id='return_rate', component_property= 'value')])
+def update_pcf_chart(ticker_value,return_rate_value):
     dcf = DCF()
     fv = FinViz() 
     keys= ['3da65237f17cee96481b2251702509d1','3a1649ceeafc5888ec99181c59cb5f8b']
@@ -217,7 +228,7 @@ def update_pcf_chart(ticker_value):
     shares_outstanding = total_equity/current_price
     tax_rate = dcf.get_tax_rate(ticker_value,key)
     treasury = get_10_year()
-    wacc = dcf.get_wacc(total_debt,total_equity,debt_payment,tax_rate,beta,treasury,ticker_value)
+    wacc = dcf.get_wacc(total_debt,total_equity,debt_payment,tax_rate,beta,treasury,ticker_value,return_rate_value)
 
     # DCF VALUATION
     names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
