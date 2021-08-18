@@ -53,7 +53,7 @@ app.layout = html.Div(children=[
             options = [
                 {'label': i,'value': i} for i in periods
             ],
-            searchable=False,
+            searchable=True,
             clearable=True,
             placeholder='Select time period of data'
             ),
@@ -63,7 +63,7 @@ app.layout = html.Div(children=[
             options = [
                 {'label': i,'value': i} for i in intervals
             ],
-            searchable=False,
+            searchable=True,
             clearable=True,
             placeholder='Select interval between data points'
             ),
@@ -82,11 +82,11 @@ app.layout = html.Div(children=[
     dcc.Dropdown(
             id='return_rate',
             options = [
-                {'label': f"{i*100}.00%",'value': i} for i in rates
+                {'label': f"{i*100}%",'value': i} for i in rates
             ],
-            searchable=False,
+            searchable=True,
             clearable=True,
-            placeholder='Select desired rate of return'
+            placeholder='Desired rate of return'
             ),
     ]),
     html.Div([
@@ -228,7 +228,7 @@ def update_pcf_chart(ticker_value,return_rate_value):
     shares_outstanding = total_equity/current_price
     tax_rate = dcf.get_tax_rate(ticker_value,key)
     treasury = get_10_year()
-    wacc = dcf.get_wacc(total_debt,total_equity,debt_payment,tax_rate,beta,treasury,ticker_value,return_rate_value)
+    wacc = dcf.get_wacc(total_debt,total_equity,debt_payment,tax_rate,beta,treasury,return_rate_value)
 
     # DCF VALUATION
     names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
