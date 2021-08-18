@@ -77,7 +77,7 @@ app.layout = html.Div(children=[
         dcc.Graph(id='yahoo_earnings_plot'),
     ]),
     html.Div([
-        dcc.Markdown(children='Company Snapshot'),
+        html.H6(children='Company Snapshot'),
         dcc.Markdown(children='Select desired rate of return for valuation'),
     dcc.Dropdown(
             id='return_rate',
@@ -96,7 +96,7 @@ app.layout = html.Div(children=[
         dcc.Graph(id='proj_cashflows'),
     ]),
     html.Div([
-        dcc.Markdown(children='Valuation Result'),
+        html.H6(children='Valuation Result'),
     ]),
     html.Div([
         dcc.Graph(id='calcs_table')
