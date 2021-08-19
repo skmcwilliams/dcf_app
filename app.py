@@ -122,8 +122,7 @@ def update_price_plot(ticker_value,period_value,interval_value):
     name = ' '.join(names)
     # gather historical data for ticker and indices data
     df = get_historical_data(ticker_value,period_value,interval_value)
-
-    price_fig = make_ohlc(ticker_value,df)
+    price_fig = make_ohlc(name,df)
     return price_fig
 
 """CALLBACK FOR HISTORICAL CASHFLOWS BAR CHART"""
