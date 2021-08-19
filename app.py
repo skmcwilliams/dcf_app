@@ -7,6 +7,7 @@ Created on Sat Mar  6 08:15:10 2021
 """
 
 from utils import DCF, FinViz,get_10_year, get_historical_data,make_ohlc,readable_nums
+import config
 from yahooquery import Ticker
 import pandas as pd
 from functools import reduce
@@ -24,7 +25,7 @@ ticker_df = pd.read_csv('tickers.csv')
 tickers = ticker_df['Symbol']
 periods = ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
 intervals = ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
-rates = range(0.05,0.20,0.05)
+rates = [0.05,0.075,0.10,0.15,0.2]
 
 # STANDARD DASH APP LANGUAGE
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -181,7 +182,7 @@ def update_yahoo_earnings(ticker_value):
 def update_pcf_chart(ticker_value,return_rate_value):
     dcf = DCF()
     fv = FinViz() 
-    keys= ['3da65237f17cee96481b2251702509d1','3a1649ceeafc5888ec99181c59cb5f8b']
+    keys= config.keys
     key= np.random.choice(keys)
     yf = Ticker(ticker_value)
     finviz_df = fv.fundamentals(ticker_value)
