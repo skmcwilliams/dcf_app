@@ -1,4 +1,4 @@
-# dcf_model
+# dcf_app
 ### Run model by opening https://dcfmodel.herokuapp.com/ and typing the ticker of desired stock for which to perform DCF valuation when requested. 
 #### The program will show the following:
   - Historical price chart with 200 and 50-day moving averages and intraday VWAP if interval is less than 1d day
