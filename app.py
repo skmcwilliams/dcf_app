@@ -24,7 +24,7 @@ ticker_df = pd.read_csv('tickers.csv')
 tickers = ticker_df['Symbol']
 periods = ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
 intervals = ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
-rates = [0.05,0.075,0.10,0.15,0.2]
+rates = range(0.05,0.20,0.05)
 
 # STANDARD DASH APP LANGUAGE
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
