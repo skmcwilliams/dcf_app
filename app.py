@@ -10,14 +10,12 @@ from utils import DCF, FinViz,get_10_year, get_historical_data,make_ohlc,readabl
 import dcf_config
 from yahooquery import Ticker
 import pandas as pd
-from functools import reduce
 import numpy as np
 import plotly.express as px
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from millify import millify
 
 # obtain tickers in all major index ETFs
@@ -56,7 +54,8 @@ app.layout = html.Div(children=[
             ],
             searchable=True,
             clearable=True,
-            placeholder='Select time period of data'
+            placeholder='Select time period of data',
+            value='60d'
             ),
         
         dcc.Dropdown(
@@ -66,7 +65,8 @@ app.layout = html.Div(children=[
             ],
             searchable=True,
             clearable=True,
-            placeholder='Select interval between data points'
+            placeholder='Select interval between data points',
+            value='1d'
             ),
         
         dcc.Graph(id = 'price_plot'),
@@ -181,7 +181,7 @@ def update_yahoo_earnings(ticker_value):
 def update_pcf_chart(ticker_value,return_rate_value):
     dcf = DCF()
     fv = FinViz() 
-    keys= config.keys
+    keys= dcf_config.keys
     key= np.random.choice(keys)
     yf = Ticker(ticker_value)
     finviz_df = fv.fundamentals(ticker_value)
@@ -270,18 +270,18 @@ def update_yahoo_ratings(ticker_value):
     yf = Ticker(ticker_value)
     yahoo_ratings = yf.recommendation_trend.reset_index()
     yahoo_ratings.columns = list(map(lambda x: x.capitalize(),yahoo_ratings.columns))
-    yahoo_ratings.rename(columns={'Buy':'Overperform','Strongbuy':'Buy','Sell':'Underperform','Strongsell':'Sell'},inplace=True)
+   
     yahoo_ratings.at[0,'Period'] = 'Current'
     yahoo_ratings.at[1,'Period'] = '1 Month Back' 
     yahoo_ratings.at[2,'Period'] = '2 Months Back'
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
     names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
     name = ' '.join(names)
-    ratings_fig = px.bar(yahoo_ratings,x='Period',y=['Sell','Underperform','Hold','Overperform','Buy'],
+    ratings_fig = px.bar(yahoo_ratings,x='Period',y=['Strongbuy','Buy','Hold','Sell','Strongsell'],
                                     title=f"{name} Recommendation Trend",color_discrete_sequence=['red','orange','yellow','lightgreen','darkgreen'])
     ratings_fig.update_layout(legend_title='',yaxis_title='Count')
 
-    texts = [yahoo_ratings['Buy'],yahoo_ratings['Overperform'],yahoo_ratings['Hold'],yahoo_ratings['Underperform'],yahoo_ratings['Sell']]
+    texts = [yahoo_ratings['Strongbuy'],yahoo_ratings['Buy'],yahoo_ratings['Hold'],yahoo_ratings['Sell'],yahoo_ratings['Strongsell']]
     for i, t in enumerate(texts):
         ratings_fig.data[i].text = t
         ratings_fig.data[i].textposition = 'inside'
