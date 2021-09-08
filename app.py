@@ -278,7 +278,7 @@ def update_yahoo_ratings(ticker_value):
     names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
     name = ' '.join(names)
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['Strongbuy','Buy','Hold','Sell','Strongsell'],
-                                    title=f"{name} Recommendation Trend",color_discrete_sequence=['red','orange','yellow','lightgreen','darkgreen'])
+                                    title=f"{name} Recommendation Trend",color_discrete_sequence=['darkgreen','lightgreen','yellow','orange','red'])
     ratings_fig.update_layout(legend_title='',yaxis_title='Count')
 
     texts = [yahoo_ratings['Strongbuy'],yahoo_ratings['Buy'],yahoo_ratings['Hold'],yahoo_ratings['Sell'],yahoo_ratings['Strongsell']]
