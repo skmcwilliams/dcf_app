@@ -7,19 +7,40 @@ Created on Sat Mar  6 08:15:10 2021
 """
 
 from utils import DCF, FinViz,get_10_year, get_historical_data,make_ohlc,readable_nums
-import dcf_config
+#import dcf_config
 from yahooquery import Ticker
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc,html
 import plotly.graph_objects as go
 from millify import millify
+from yahoo_fin import stock_info as si
 
-# obtain tickers in all major index ETFs
-ticker_df = pd.read_csv('tickers.csv')
+def get_tickers():
+       # gather stock symbols from major US exchanges
+    df = pd.concat([pd.DataFrame(si.tickers_sp500()), pd.DataFrame(si.tickers_nasdaq()),
+           pd.DataFrame(si.tickers_dow()),pd.DataFrame(si.tickers_other())])
+    
+    def sym_map(syms):
+        bad_list = ['W', 'R', 'P', 'Q']
+        sav_set = set()
+        for s in syms:
+            if len(s) > 4 and s[-1] in bad_list:
+                pass
+            else:
+                sav_set.add(s)
+        return sav_set
+    
+    sym = list(df[0])
+    symbols = sym_map(sym)
+    return symbols
+
+        
+
+# obtain tickers in all major index ETFs and others
+ticker_df = pd.DataFrame(get_tickers(),columns=['Symbol']).dropna(subset=['Symbol'])
 tickers = ticker_df['Symbol']
 periods = ['1d', '5d', '7d', '60d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']
 intervals = ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
@@ -118,8 +139,7 @@ app.layout = html.Div(children=[
               dash.dependencies.Input(component_id='period', component_property= 'value'),
               dash.dependencies.Input(component_id='interval', component_property= 'value')])
 def update_price_plot(ticker_value,period_value,interval_value):
-    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
-    name = ' '.join(names)
+    name = ticker_value
     # gather historical data for ticker and indices data
     df = get_historical_data(ticker_value,period_value,interval_value)
     price_fig = make_ohlc(name,df)
@@ -139,8 +159,7 @@ def update_historical_plot(ticker_value):
 
     # PLOT HISTORICAL CASH FLOWS
     millified = list(readable_nums(cash_flow_df['FreeCashFlow']))
-    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
-    name = ' '.join(names)
+    name = ticker_value
     cf_fig = px.bar(data_frame=cash_flow_df,x='Period',y='FreeCashFlow',orientation='v',color_discrete_sequence=['navy'],
     title = f"{name} Historical Free Cash Flows",text=millified,labels={'FreeCashFlow':'Free Cash Flow ($)'})
     return cf_fig
@@ -157,8 +176,8 @@ def update_yahoo_earnings(ticker_value):
     yahoo_earnings.at[2,'Period'] = '2 Quarters Back'
     yahoo_earnings.at[3,'Period'] = '1 Quarter Back'
 
-    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
-    name = ' '.join(names)
+    name = ticker_value
+
     earnings_fig = px.bar(yahoo_earnings,x='Period',y=['epsActual','epsEstimate'],barmode='group',
                             color_discrete_sequence=['navy','paleturquoise'],
                             title=f"{name} Quarterly Earnings Per Share")
@@ -231,8 +250,8 @@ def update_pcf_chart(ticker_value,return_rate_value):
     wacc = dcf.get_wacc(total_debt,total_equity,debt_payment,tax_rate,beta,treasury,return_rate_value)
 
     # DCF VALUATION
-    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
-    name = ' '.join(names)
+    name = ticker_value
+
     intrinsic_value = dcf.intrinsic_value(cash_flow_df, total_debt, cash_and_ST_investments,finviz_df, wacc,shares_outstanding,name)
                                                 
 
@@ -275,8 +294,8 @@ def update_yahoo_ratings(ticker_value):
     yahoo_ratings.at[1,'Period'] = '1 Month Back' 
     yahoo_ratings.at[2,'Period'] = '2 Months Back'
     yahoo_ratings.at[3,'Period'] = '3 Months Back' 
-    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
-    name = ' '.join(names)
+    name = ticker_value
+
     ratings_fig = px.bar(yahoo_ratings,x='Period',y=['Strongbuy','Buy','Hold','Sell','Strongsell'],
                                     title=f"{name} Recommendation Trend",color_discrete_sequence=['darkgreen','lightgreen','yellow','orange','red'])
     ratings_fig.update_layout(legend_title='',yaxis_title='Count')
@@ -292,8 +311,8 @@ def update_yahoo_ratings(ticker_value):
               [dash.dependencies.Input(component_id='ticker', component_property= 'value')])
 def update_finviz(ticker_value):
     fv = FinViz() 
-    names = ticker_df['Name'][ticker_df['Symbol']==ticker_value].iloc[0].split()[:-2]
-    name = ' '.join(names)
+    name = ticker_value
+
     finviz_ratings = fv.get_ratings(ticker_value)
     finviz_ratings = finviz_ratings[finviz_ratings['rating'].isin(['Upgrade','Downgrade'])]
     year = str(finviz_ratings['date'].iloc[0][-2:])

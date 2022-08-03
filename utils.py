@@ -7,12 +7,11 @@ Created on Wed Apr 14 09:49:38 2021
 """
 import pandas as pd
 import numpy as np
-from yahoofinancials import YahooFinancials as yf
+#from yahoofinancials import YahooFinancials as yf
 from bs4 import BeautifulSoup as bs
 import requests
 from urllib.request import urlopen
 import json
-import plotly.io as pio
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
