@@ -7,7 +7,7 @@ Created on Sat Mar  6 08:15:10 2021
 """
 
 from utils import DCF, FinViz,get_10_year, get_historical_data,make_ohlc,readable_nums
-#import dcf_config
+# import dcf_config
 from yahooquery import Ticker
 import pandas as pd
 import numpy as np
@@ -200,8 +200,8 @@ def update_yahoo_earnings(ticker_value):
 def update_pcf_chart(ticker_value,return_rate_value):
     dcf = DCF()
     fv = FinViz() 
-    keys= dcf_config.keys
-    key= np.random.choice(keys)
+    # keys= dcf_config.keys
+    # key= np.random.choice(keys)
     yf = Ticker(ticker_value)
     finviz_df = fv.fundamentals(ticker_value)
     #GET QUARTERLY CASH FLOW AND BALANCE SHEET
