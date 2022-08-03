@@ -12,8 +12,7 @@ from yahooquery import Ticker
 import pandas as pd
 import numpy as np
 import plotly.express as px
-import dash
-from dash import dcc,html
+from dash import Dash, dcc,html
 import plotly.graph_objects as go
 from millify import millify
 from yahoo_fin import stock_info as si
