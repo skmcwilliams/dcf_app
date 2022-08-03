@@ -21,3 +21,4 @@ numpy==1.*
 yahoofinancials==1.6.*
 yahooquery==2.2.5
 millify==0.1.1
+yahoo_fin==0.8.*
